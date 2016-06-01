@@ -14,30 +14,27 @@ names(plantcomp)[1]<-"Sample_name"
 #Remove plant species only present in one or two plots; there are some plots that have plant data but not microbe data. 69 70 71 77 81 108 117 118 147 148 149 151. This is because when we started doing the surveys we were going to all plots for plants and only sample some for microbes, then we realized that that was insane!
 dim(plantcomp)
 plantcomp2<-plantcomp[,colSums(plantcomp>0)>2]
-labelsPlant<-as.data.frame(cbind(colnames(plantcomp2)[2:56],colnames(plantcomp2)[2:56],"Plant"))
-colnames(plantlabels)<-c("otu","orders","kingdomlabels")
+labelsPlant<-as.data.frame(cbind(otu=colnames(plantcomp2)[2:56],labels="Plant"))
+
+idenovo19225, idenovo8246 are glomeromycota
+temp<-
 
 
 
-
-
-
-#Merge things, for euks sample 81 did not amplify. for bacteria, samples 126, 5, 34 did not amplify. should have 94 samples after merging
+#Merge things, for euks sample 81 did not amplify. for ITS 126 didnt amplify. for bacteria, samples 5,34,126 did not amplify. should have 94 samples after merging
 #first merge comm.dataEuk with comm.data16S
-comm.dataEuk$Sample_name<-as.numeric(as.character(comm.dataEuk$Sample_name))
-comm.data16S$Sample_name<-as.numeric(as.character(comm.data16S$Sample_name))
 #I need to remove all the description columns in one of the files, then merge
-comm.data16Sa<-cbind(Sample_name=comm.data16S$Sample_name,comm.data16S[,-c(1:26)])
+comm.data16Sa<-cbind(Sample_name=comm.data16S$Sample_name,comm.data16S[,-c(1:31)])
 comm.dataALL1<-merge(comm.dataEuk,comm.data16Sa,"Sample_name",sort=F,all.y=F,all.x=F)
 comm.dataALL1$Sample_name
 
-#checking if column names for bacteria and euks match.
-test1<-names(comm.data16S[,-c(1:26)])
-test2<-names(comm.dataEuk[,-c(1:26)])
+#checking if column names for bacteria and euks match. they shouldn't since I renamed the euk and its with a "e" and "i"
+test1<-names(comm.data16S[,-c(1:31)])
+test2<-names(comm.dataEuk[,-c(1:31)])
 length(test1)
 length(test2)
 length(union(test1,test2))
-intersect(test1,test2)#five of the names match, when I merge, it will call them denovo60343.x and denovo60343.y which is ok for now, but for labels it will mess things up if they are ever in a network
+intersect(test1,test2)
 
 #then merge plants with microbes
 comm.dataALL<-merge(comm.dataALL1,plantcomp2,"Sample_name",sort=F,all.y=F)
@@ -53,8 +50,6 @@ length(which(lomehiALL=="hi"))
 
 comm.dataALL<-cbind(lomehi=lomehiALL,comm.dataALL)
 trts<-as.vector(unique(lomehiALL))
-
-
 
 
 #Setup parallel backend to use 4 processors

@@ -1,70 +1,42 @@
 
 #######Read in OTU data#######
+#files:
+#Euks no metazoa no fungi 97%
+#Euks metazoa 97%
+#Fungi ITS 97%
+#Bacteria 97%
 
 ##### Read in euk files, filtered with singletons removed #####
-otufileEuk <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantMEukSoil2015sing.biom")
-#otufileEuknoFungi <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantEukSoil2015singnoFungi.biom")
-head(tax_table(otufileEuk))
+otufileEukS <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantEukSoil2015nometazoanfungising.biom")
+otufileEukN <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantEukNematodemetazoancransing.biom")
+
+head(tax_table(otufileEukN))
+unique(tax_table(otufileEukS)[,"Rank3"])
 
 #Import mapping and tree file
-mapEuk<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/EukBr_Niwot_20072015_All_MapFile.txt")
+mapEuk<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/EukBr_Niwot_20072015_All_MapFilenewlomehi.txt")
 
-treeEuk<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_truncate_97_rep_set_filtsingS2015nonchimeras_sinaaln.tre")
+treeEukS<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_truncate_97_rep_set_filtsingS2015nonchimeras_sinaaln.tre")
+treeEukN<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_truncate_97_rep_set_filtsingN2015nonchimeras_sinaaln.tre")
 
-datEuk<-merge_phyloseq(otufileEuk,mapEuk,treeEuk)
+datEukS<-merge_phyloseq(otufileEukS,mapEuk,treeEukS)
+datEukN<-merge_phyloseq(otufileEukN,mapEuk,treeEukN)
 
-#what other macrobes to remove from Euk dataset?
-#To remove
-Rank4=__Acanthocephala
-Rank4=__Annelida
-Rank4=__Bryozoa
-Rank4=__Chaetognatha
-Rank4=__Cnidaria
-Rank4=__Craniata
-Rank4=__Ctenophora
-Rank4=__Echinodermata
-Rank4=__Mollusca
-Rank4=__Nemertea
-Rank4=__Platyhelminthes
-Rank4=__Porifera
-Rank6=__Merostomata (__Arthropoda; __Chelicerata; )
-Rank6= __Malacostraca(__Arthropoda; __Crustacea;)
-Rank5=__Hexapoda (__Arthropoda) (all of hexapods, most are insects and collembola but even proturans at .5-2mm)
-Rank5=__Myriapoda (__Arthropoda)
-
-Arthopods, to remove (Rank 7): 
-Rank7=__Eusimonia (spider); 
-Rank7=__Microcaeculus (mites but the pics look larger than 1mm, maybe 2mm);
-Rank7=__Neogovea (mite but looks about 2mm); 
-Rank7=__Penthaleus (mites but large); 
-Rank7=__Pimoa (spider);
-Rank7=__Rhagidiidae (mite but look large not much info);
-Rank7=__Sisicottus; (spider);
-Rank7=__uncultured_eukaryote (I guess delete these)
-
-
-
-To Keep:
-Arthopods to keep:
-rank7=__Alicorhagia (mites, prob less than 1mm); __Alicorhagidia (mites prob less than 1mm), __Bimichaelia (mites, prob small), __Cercoleipus (mites prob small); __Cerophagus (mites prob small); __Cosmolaelaps; (mite, prob small); __Dactylothrombium (1-1.2mm), __Derocheilocaris_typicus (.5 mm really a crustacean but it is under arachnida here); __Eupelops (~1mm);__Eupodidae (mites, most likely <1mm);__Eutegaeus (mite, prob small); __Gamasiphis (mite ~1mm); __Gehypochthonius (mite, ~1mm); __Gozmanyina (mite, cant find info about size);__Hydrozetes (1mm); __Nanhermannia (mites 1mm); __Nesiacarus (mite, no info);__Perlohmannia (about 1mm maybe a tad larger);__Rhizoglyphus (mites small); __Rostrozetes (mites small); __Tectocepheus (mite small); __Tetranychus (spider mite, .4mm but pics look larger); __Trhypochthonius (about 1mm); __Xenillus (mite about 1mm); __Zercon (mite, not much info possibly small)
-Metazoans to keep: 
-Rank4=nematoda, rotifera, tardigrada (.5mm),  __Gastrotricha(small worms .3mm), __Kinorhyncha (mud dragons max 1mm), __Loricifera (.1-1mm), __Placozoa (.5 or 1mm)
-rank6=__Maxillopoda(__Arthropoda; __Crustacea; )
-Rank6=__Ostracoda(__Arthropoda; __Crustacea)
-
-#if I want to do it here, it actually is easier in qiime since you don't have to specify rank
-#datEuk<-subset_taxa(datEuk,domain=="Eukaryota"&class!="Embryophyta")
-
-
+#remove a few samples, sample 2A for nematodes (rep), sample N.2A has only 3 otus in it and they all are abundant in other samples so it doesn't affect single read count
+datEukN2 <- prune_samples(sample_names(datEukN)!="N.2A.2015", datEukN)
+#sample 78 for nematodes (it only had 164 reads)
+datEukN3 <- prune_samples(sample_names(datEukN2)!="N.78.2015", datEukN2)
+#maybe 61 which has 489 reads for the soil dataset
+datEukS2 <- prune_samples(sample_names(datEukS)!="S.61.2015", datEukS)
 
 #rarefy and transform to relative abundance
-min(sample_sums(datEuk))#rarefy to 1329, 1205
-datEukr<-rarefy_even_depth(datEuk,sample.size=min(sample_sums(datEuk)),rngseed=10,replace=F) #4163, 3606 OTUs were removed because they are no longer present in any sample after random subsampling, 
-datEukr2 = transform_sample_counts(datEukr, function(x) x/sum(x) )
+min(sample_sums(datEukS2))#rarefy to 808
+min(sample_sums(datEukN3))#rarefy to 692
+datEukS3<-rarefy_even_depth(datEukS2,sample.size=min(sample_sums(datEukS2)),rngseed=10,replace=F) #1895 OTUs were removed because they are no longer present in any sample after random subsampling, 
+datEukN4<-rarefy_even_depth(datEukN3,sample.size=min(sample_sums(datEukN3)),rngseed=10,replace=F) #2601 OTUs were removed because they are no longer present in any sample after random subsampling, 
+datEukS4 = transform_sample_counts(datEukS3, function(x) x/sum(x) )
+datEukN5 = transform_sample_counts(datEukN4, function(x) x/sum(x) )
 rownames(otu_table(datEukr))[1:10]
-
-
-
 
 
 
@@ -89,10 +61,13 @@ rownames(otu_table(datEukr))[1:10]
 
 #heterotrophic eukaryota (things without a kingdom): Picozoa (phylum nonphotosynthetic unicellular eukaryotes, only 1 OTU); RT5iin14; Apusomonadidae (nonphotosynthetic protist, unknown kingdom); Kathablepharidae (nonPs protist, unkonwn kingdo);Telonema (nonPs protist genus);Breviatea (amoeba like);DH147-EKD23;__Ancyromonadida;GoC2-B10 (no info);Zeuk77 (no info)
 
-head(tax_table(datEukr2))
-labelsEuk<-tax_table(datEukr2)[,"Rank3"]#
+#datEukS4
+#datEukN5
 
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Fungi")
+head(tax_table(datEukS4))
+labelsEukS<-tax_table(datEukS4)[,"Rank3"]#
+
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Fungi")
 labelsEuk[ind]<-"Fungi"
 ind<-which(tax_table(datEukr2)[,"Rank3"]=="__uncultured_Sarcosomataceae")#i'm putting the wierd centrohelid/fungus with fungi
 labelsEuk[ind]<-"Fungi"
@@ -186,89 +161,13 @@ colnames(labelsITS)<-"labels"
 #replace tax table 
 tax_table(datITSr)<-cbind(tax_table(datITSr),labelsITS)
 
+temp<-as.data.frame(sample_data(datITS))
+sort(as.numeric(as.character(temp$Sample_name)))
 
 
 
 
 
-###### Replace fungi from 18S with ITS ######
-
-datITSr2
-datEukr2
-
-head(sample_data(datEukr2))
-
-#figure out which samples are shared across Euk and ITS datasets. Euk doesnt have 81, ITS doesn't have 126 (no reads amplified at all)
-temp<-as.data.frame(as.matrix(sample_data(datEukr2)[,"Sample_name"]))
-sort(as.numeric(temp$Sample_name))
-temp2<-as.data.frame(as.matrix(sample_data(datITSr2)[,"Sample_name"]))
-sort(as.numeric(temp2$Sample_name))
-cbind(sort(as.numeric(as.character(temp$Sample_name))),sort(as.numeric(as.character(sort(temp2$Sample_name)))))
-#temp3<-as.data.frame(as.matrix(sample_data(datBacr2)[,"Sample_name"]))
-
-datEukr3<-subset_samples(datEukr2,Sample_name!="126")
-datITSr3<-subset_samples(datITSr2,Sample_name!="81")
-
-#calculated relative abundance of fungi
-temp<-otu_table(datEukr3)
-temp2<-aggregate.data.frame(temp,by=list(labels=labelsEuk),sum)
-rownames(temp2)<-temp2$labels;temp2$labels<-NULL
-fungirelabun<-t(temp2["Fungi",])
-
-#remove fungi from euks
-datEukr4<-subset_taxa(datEukr3,labels!="Fungi")#labels has no NAs so this works
-
-datEukr4otu<-cbind(sample_data(datEukr4),t(otu_table(datEukr4)))
-head(datEukr4otu)[,1:40]
-datITSr3otu<-cbind(sample_data(datITSr3),t(otu_table(datITSr3)))
-head(datITSr3otu)[,1:40]
-
-#make sample numeric
-datEukr4otu$Sample_name<-as.numeric(as.character(datEukr4otu$Sample_name))
-datITSr3otu$Sample_name<-as.numeric(as.character(datITSr3otu$Sample_name))
-
-#test if there is denovo name overlap, yes a ton, so relabel the denovos here and in the labels files
-nameseuk<-names(datEukr4otu[,-c(1:31)])
-namesits<-names(datITSr3otu[,-c(1:31)])
-length(nameseuk)
-length(namesits)
-length(union(nameseuk,namesits))
-intersect(nameseuk,namesits)
-
-nameseuk2 <- sub("^", "e", nameseuk )
-namesits2 <- sub("^", "i", namesits )
-
-names(datEukr4otu)[-c(1:31)]<-nameseuk2
-names(datITSr3otu)[-c(1:31)]<-namesits2
-
-labelsEuk2<-labelsEuk
-rownames(labelsEuk2)<-sub("^", "e",rownames(labelsEuk2))
-labelsITS2<-labelsITS
-rownames(labelsITS2)<-sub("^", "i",rownames(labelsITS2))
-
-
-
-#sort things in numeric order by sample
-fungirelabun2<-fungirelabun[order(datEukr4otu$Sample_name)]
-names(fungirelabun2)<-rownames(fungirelabun)[order(datEukr4otu$Sample_name)]
-datEukr5otu<-datEukr4otu[order(datEukr4otu$Sample_name),]
-datITSr4otu<-datITSr3otu[order(datITSr3otu$Sample_name),]
-
-#multiply ITS by fungi rel abun
-datITSr4otusp<-datITSr4otu[,-c(1:31)]
-datITSr4otusp2<-datITSr4otusp*fungirelabun2
-rowSums(datITSr4otusp2)#this appears to have worked, the rowSumes (tot rel abun for each sample are the same as the fungirelabun2 file)
-
-#add ITS to the right of the Euk data
-datEukr6otu<-cbind(datEukr5otu,datITSr4otusp2)
-dim(datEukr6otu)
-
-#check
-idenovo44940 in plot 5 is 0.00189401
-temp<-otu_table(datITSr2)
-head(temp)[,1:35]
-temp[which(rownames(temp)=="denovo44940"),]
-0.008008008, then scale *0.23651452 (from fungirelabun), checks
 
 
 ##### Read in bacteria files, filtered with singletons removed #####
@@ -301,9 +200,7 @@ tax_table(datBacr2)<-cbind(tax_table(datBacr),labelsBac)
 
 #make otu table 10:52-11:02 (takes 10 min)
 datBacr2otu<-cbind(sample_data(datBacr2),t(otu_table(datBacr2)))
-
-
-
+datBacr2otu$Sample_name<-as.numeric(as.character(datBacr2otu$Sample_name))
 
 
 
