@@ -36,28 +36,26 @@ datEukS3<-rarefy_even_depth(datEukS2,sample.size=min(sample_sums(datEukS2)),rngs
 datEukN4<-rarefy_even_depth(datEukN3,sample.size=min(sample_sums(datEukN3)),rngseed=10,replace=F) #2601 OTUs were removed because they are no longer present in any sample after random subsampling, 
 datEukS4 = transform_sample_counts(datEukS3, function(x) x/sum(x) )
 datEukN5 = transform_sample_counts(datEukN4, function(x) x/sum(x) )
-rownames(otu_table(datEukr))[1:10]
 
 
 
 #make a label column with kingdom/phylum level labels
 
 #Making groups for labeling graphs
-#Fungi (kingdom), 
+#Amoebozoa (kingdom)
+#photosynthetic Alveolata (kingdom) (phylum Dinoflagellata: mostly photosynthetic; nonphotosynthetic Protoperidinium, both SL163A10 and Pfiesteria (can if it eats an alga), unknown D244), 
+#nonphotosynthetic Alveolata (phyla Ciliophora(predators), protalveolata, apicomplexa (parasites)), BOLA553 is a near apicomplexan, not sure what SCM37C52 is so I put it here
 #Archaeplastida (major_clade), combine the kingdoms Chloroplastida, Rhodophyceae, Haptophyta, 
 #Rhizaria (kingdom: unicellular amoeboid euks), 
-#Amoebozoa(kingdom),
 #Holozoa(kingdom: all animals, not fungi), includes metazoa (animals)
-#photosynthetic Alveolata, kingdom (phylum Dinoflagellata: mostly photosynthetic; nonphotosynthetic Protoperidinium, both SL163A10 and Pfiesteria (can if it eats an alga), unknown D244), 
-#nonphotosynthetic Alveolata (phyla Ciliophora(predators), protalveolata, apicomplexa (parasites)), BOLA553 is a near apicomplexan, not sure what SCM37C52 is so I put it here
 #photosynthetic Excavata major clade (was Discoba kingdom) (class Euglenida: mostly photosynthetic), 
 #nonphotosnthetic Excavata (was Discoba) (in discoba, phylum Heterolobosea: parasites, free living, symbiotic, amoeba-like, and phylum Jakoba heterotrophic), superphylum metamonada, doesn't have kingdom, parasites not Ps.
 #photosynthetic Cryptophyceae is a kingdom, they have one or two chloroplasts, except for Chilomonas, which has leucoplasts (not pigmented not for Ps) and Goniomonas (formerly Cyathomonas) which lacks plastids entirely.P1-31 (i can't find much info on this, some sites called them picoplankton and most of the cryptophyceae are photosynthetic). Cryptomonadales can't find much about it but assume Ps. __SA1-3C06 is at rank2 but notes in silva say "cryptophyte"
 #nonphotosynthetic cryptophyceae - Chilomonas and Goniomonas (formerly Cyathomonas)
 #Haptophyta kingdom, I think all are Ps
-#Centrohelida - encyclopedia of lif said some species have photosynthetic symbionts but I can't find any info on Ps taxa.Heterophryidae, Mb-5C (can't find any info on, I'll put it with nonPs), M1-18D08(can't find info),Acanthocystidae(can't find info),Pterocystis(can't find info), so I will leave them all in a group called "centrohelida"
+#Centrohelida - encyclopedia of life said some species have photosynthetic symbionts but I can't find any info on Ps taxa.Heterophryidae, Mb-5C (can't find any info on, I'll put it with nonPs), M1-18D08(can't find info),Acanthocystidae(can't find info),Pterocystis(can't find info), so I will leave them all in a group called "centrohelida"
 #NonPs Stramenopiles: MAST-3, MAST-12, MAST-7, Labyrinthulomycetes,Bicosoecida,Peronosporomycetes,Hyphochytriales,__Incertae_Sedis(were all __Pirsonia which is a parasite of algae)
-#Ps Stramenopiles: Pelagophycea, Diatomea, Eustigmatales, Xanthophyceae, Phaeothamniophyceae, Chrysophyceae,Ochromonas,CCI40 (not much info, some places call it is chrysophyte),Synurales, Raphidophyceae, NA1-2A5 (can't find any info so putting it with Ps)
+#Ps Stramenopiles: Pelagophycea, Diatomea, Eustigmatales, Xanthophyceae, Phaeothamniophyceae, Chrysophyceae,Ochromonas,CCI40 (not much info, some places call it is chrysophyte),Synurales, Raphidophyceae, NA1-2A5 (can't find any info so putting it with Ps), TKR07M.92
 
 #heterotrophic eukaryota (things without a kingdom): Picozoa (phylum nonphotosynthetic unicellular eukaryotes, only 1 OTU); RT5iin14; Apusomonadidae (nonphotosynthetic protist, unknown kingdom); Kathablepharidae (nonPs protist, unkonwn kingdo);Telonema (nonPs protist genus);Breviatea (amoeba like);DH147-EKD23;__Ancyromonadida;GoC2-B10 (no info);Zeuk77 (no info)
 
@@ -67,72 +65,81 @@ rownames(otu_table(datEukr))[1:10]
 head(tax_table(datEukS4))
 labelsEukS<-tax_table(datEukS4)[,"Rank3"]#
 
-ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Fungi")
-labelsEuk[ind]<-"Fungi"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__uncultured_Sarcosomataceae")#i'm putting the wierd centrohelid/fungus with fungi
-labelsEuk[ind]<-"Fungi"
-ind<-which(tax_table(datEukr2)[,"Rank2"]=="__Archaeplastida")
-labelsEuk[ind]<-"Archaeplastida"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Rhizaria")
-labelsEuk[ind]<-"Rhizaria"
-ind<-which(tax_table(datEukr2)[,"Rank2"]=="__Amoebozoa")
-labelsEuk[ind]<-"Amoebozoa"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Holozoa"|tax_table(datEukr2)[,"Rank3"]=="__Metazoa")
-labelsEuk[ind]<-"Holozoa"
-ind<-which(tax_table(datEukr2)[,"Rank4"]=="__Dinoflagellata")
-labelsEuk[ind]<-"Photosynthetic_Alveolata"
-ind<-which(tax_table(datEukr2)[,"Rank4"]!="__Dinoflagellata"&tax_table(datEukr2)[,"Rank3"]=="__Alveolata")
-labelsEuk[ind]<-"Nonphotosynthetic_Alveolata"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Goniomonas")
-labelsEuk[ind]<-"Nonphotosynthetic_Chryptophyceae"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__P1-31"|tax_table(datEukr2)[,"Rank3"]=="__Cryptomonadales"|tax_table(datEukr2)[,"Rank2"]=="__SA1-3C06")
-labelsEuk[ind]<-"Photosynthetic_Chryptophyceae"
-ind<-which(tax_table(datEukr2)[,"Rank6"]=="__Euglenida")
-labelsEuk[ind]<-"Photosynthetic_Excavata"
-ind<-which(tax_table(datEukr2)[,"Rank6"]!="__Euglenida"&tax_table(datEukr2)[,"Rank2"]=="__Excavata")
-labelsEuk[ind]<-"Nonphotosynthetic_Excavata"
-ind<-which(tax_table(datEukr2)[,"Rank2"]=="__Haptophyta")
-labelsEuk[ind]<-"Haptophyta"
-ind<-which(tax_table(datEukr2)[,"Rank2"]=="__Centrohelida"&tax_table(datEukr2)[,"Rank3"]!="__uncultured_Sarcosomataceae")
-labelsEuk[ind]<-"Centrohelida"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Stramenopiles"|tax_table(datEukr2)[,"Rank4"]%in%c("__MAST-3","__MAST-12","__MAST-7","__Labyrinthulomycetes","__Bicosoecida","__Peronosporomycetes","__Hyphochytriales,__Incertae_Sedis"))
-labelsEuk[ind]<-"Nonphotosynthetic_Stramenopiles"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__Stramenopiles"|tax_table(datEukr2)[,"Rank4"]%in%c("__Pelagophycea","__Diatomea","__Eustigmatales","__Xanthophyceae","__Phaeothamniophyceae","__Chrysophyceae","__Ochromonas","__CCI40","__Synurales","__Raphidophyceae","__NA1-2A5"))
-labelsEuk[ind]<-"Photosynthetic_Stramenopiles"
-ind<-which(tax_table(datEukr2)[,"Rank3"]=="__RT5iin14"|tax_table(datEukr2)[,"Rank2"]=="__Picozoa"|tax_table(datEukr2)[,"Rank2"]=="__RT5iin25"|tax_table(datEukr2)[,"Rank3"]=="__Apusomonadidae"|tax_table(datEukr2)[,"Rank2"]=="__Kathablepharidae"|tax_table(datEukr2)[,"Rank3"]=="__Telonema"|tax_table(datEukr2)[,"Rank3"]=="__Breviatea"|tax_table(datEukr2)[,"Rank2"]=="__DH147-EKD23"|tax_table(datEukr2)[,"Rank3"]=="__Ancyromonadida"|tax_table(datEukr2)[,"Rank2"]=="__GoC2-B10"|tax_table(datEukr2)[,"Rank2"]=="__Zeuk77")
-labelsEuk[ind]<-"Heterotrophic_Eukarya"
-#I could separate excavata into kingdoms and super phyla and also separate archaeplastida into its 3 kingdoms
-unique(labelsEuk)
-colnames(labelsEuk)<-"labels"
+ind<-which(tax_table(datEukS4)[,"Rank2"]=="__Amoebozoa")
+labelsEukS[ind]<-"Amoebozoa"
+ind<-which(tax_table(datEukS4)[,"Rank4"]=="__Dinoflagellata")#__Protoperidinium is included but I then change it below becuase some things have an NA for rank8
+labelsEukS[ind]<-"Photosynthetic_Alveolata"
+ind<-which(tax_table(datEukS4)[,"Rank8"]=="__Protoperidinium")
+labelsEukS[ind]<-"Nonphotosynthetic_Alveolata"
+ind<-which(tax_table(datEukS4)[,"Rank4"]!="__Dinoflagellata"&tax_table(datEukS4)[,"Rank3"]=="__Alveolata")
+labelsEukS[ind]<-"Nonphotosynthetic_Alveolata"
+ind<-which(tax_table(datEukS4)[,"Rank2"]=="__Archaeplastida")
+labelsEukS[ind]<-"Archaeplastida"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Rhizaria")
+labelsEukS[ind]<-"Rhizaria"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Holozoa")
+labelsEukS[ind]<-"Holozoa"
+ind<-which(tax_table(datEukS4)[,"Rank6"]=="__Euglenida")
+labelsEukS[ind]<-"Photosynthetic_Excavata"
+ind<-which(tax_table(datEukS4)[,"Rank6"]!="__Euglenida"&tax_table(datEukS4)[,"Rank2"]=="__Excavata")
+labelsEukS[ind]<-"Nonphotosynthetic_Excavata"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Goniomonas")
+labelsEukS[ind]<-"Nonphotosynthetic_Chryptophyceae"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__P1-31"|tax_table(datEukS4)[,"Rank3"]=="__Cryptomonadales"|tax_table(datEukS4)[,"Rank2"]=="__SA1-3C06")
+labelsEukS[ind]<-"Photosynthetic_Chryptophyceae"
+ind<-which(tax_table(datEukS4)[,"Rank2"]=="__Haptophyta")
+labelsEukS[ind]<-"Haptophyta"
+ind<-which(tax_table(datEukS4)[,"Rank2"]=="__Centrohelida"&tax_table(datEukS4)[,"Rank3"]!="__uncultured_Sarcosomataceae")
+labelsEukS[ind]<-"Centrohelida"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__uncultured_Sarcosomataceae")#i'm putting the wierd centrohelid/fungus with centrohilid (since I supposedly took out al fungi)
+labelsEukS[ind]<-"Centrohelida"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Stramenopiles"&tax_table(datEukS4)[,"Rank4"]%in%c("__MAST-3","__MAST-12","__MAST-7","__Labyrinthulomycetes","__Bicosoecida","__Peronosporomycetes","__Hyphochytriales","__Incertae_Sedis"))
+labelsEukS[ind]<-"Nonphotosynthetic_Stramenopiles"
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Stramenopiles"&tax_table(datEukS4)[,"Rank4"]%in%c("__Pelagophycea","__Diatomea","__Eustigmatales","__Xanthophyceae","__Phaeothamniophyceae","__Chrysophyceae","__Ochromonas","__CCI40","__Synurales","__Raphidophyceae","__NA1-2A5","__TKR07M.92","__Pelagophyceae"))
+labelsEukS[ind]<-"Photosynthetic_Stramenopiles"
 
-#replace tax table for datEukr2 (relative abun) and datEukr (not relativized)
-tax_table(datEukr2)<-cbind(tax_table(datEukr2),labelsEuk)
-tax_table(datEukr)<-cbind(tax_table(datEukr2),labelsEuk)
+ind<-which(tax_table(datEukS4)[,"Rank3"]=="__RT5iin14"|tax_table(datEukS4)[,"Rank2"]=="__Picozoa"|tax_table(datEukS4)[,"Rank2"]=="__RT5iin25"|tax_table(datEukS4)[,"Rank3"]=="__Apusomonadidae"|tax_table(datEukS4)[,"Rank2"]=="__Kathablepharidae"|tax_table(datEukS4)[,"Rank3"]=="__Telonema"|tax_table(datEukS4)[,"Rank3"]=="__Breviatea"|tax_table(datEukS4)[,"Rank2"]=="__DH147-EKD23"|tax_table(datEukS4)[,"Rank3"]=="__Ancyromonadida"|tax_table(datEukS4)[,"Rank2"]=="__GoC2-B10"|tax_table(datEukS4)[,"Rank2"]=="__Zeuk77")
+labelsEukS[ind]<-"Heterotrophic_Eukarya"
 
+#unique(labelsEukS)
+#sort(unique(tax_table(datEukS4)[,"Rank3"]))
+#ind<-which(tax_table(datEukS4)[,"Rank3"]=="__Alveolata")
+#unique(tax_table(datEukS4)[ind,"Rank4"])
+#tax_table(datEukS4)[which(rownames(tax_table(datEukS4))=="denovo64661")]
 
-#sort(unique(tax_table(datEukr2)[,"Rank3"]))
-#ind<-which(tax_table(datEukr2)[,"Rank3"]=="__uncultured_Eimeriidae")
-#unique(tax_table(datEukr2)[ind,])
-#tax_table(datEukr2)[which(rownames(tax_table(datEukr2))=="denovo64661")]
+#I could separate excavata into kingdoms/super phyla and also separate archaeplastida into its 3 kingdoms
+unique(labelsEukS)
+colnames(labelsEukS)<-"labels"
+
+#replace tax table for datEukS4 (relative abun) and datEukS3 (not relativized)
+tax_table(datEukS4)<-cbind(tax_table(datEukS4),labelsEukS)
+tax_table(datEukS3)<-cbind(tax_table(datEukS3),labelsEukS)
 
 #looking where the weird centrohelid fungi comes out in a tree
-ex1<-subset_taxa(datEukr2,Rank3=="__Fungi")
-myTaxa<-names(taxa_sums(ex1))#[1:46]
-myTaxa<-c(myTaxa,"denovo65528")
-ex3<-subset_taxa(datEukr2,Rank2=="__Centrohelida")
-myTaxa<-c(myTaxa,names(taxa_sums(ex3)))
-ex3<-subset_taxa(datEukr2,Rank3=="__Rhizaria")
-myTaxa<-c(myTaxa,names(taxa_sums(ex3)))
-ex2 = prune_taxa(myTaxa, datEukr2)
-plot_tree(ex2, label.tips = "taxa_names",color="Rank3")
+#ex1<-subset_taxa(datEukr2,Rank3=="__Fungi")
+#myTaxa<-names(taxa_sums(ex1))#[1:46]
+# myTaxa<-c(myTaxa,"denovo65528")
+# ex3<-subset_taxa(datEukr2,Rank2=="__Centrohelida")
+# myTaxa<-c(myTaxa,names(taxa_sums(ex3)))
+# ex3<-subset_taxa(datEukr2,Rank3=="__Rhizaria")
+# myTaxa<-c(myTaxa,names(taxa_sums(ex3)))
+# ex2 = prune_taxa(myTaxa, datEukr2)
+# plot_tree(ex2, label.tips = "taxa_names",color="Rank3")
 
 #look at tree of abundant taxa
-myTaxa<-c(names(sort(taxa_sums(datEukr2),decreasing=T)))[1:100]
-ex2 = prune_taxa(myTaxa, datEukr2)
-plot_tree(ex2, label.tips = "taxa_names",color="Rank3")
+#myTaxa<-c(names(sort(taxa_sums(datEukr2),decreasing=T)))[1:100]
+#ex2 = prune_taxa(myTaxa, datEukr2)
+#plot_tree(ex2, label.tips = "taxa_names",color="Rank3")
 
 
+#labels for datEukN5 (relativized) and datEukN4 (not relativized), use Rank4
+head(tax_table(datEukN5))
+labelsEukN<-substring(tax_table(datEukN5)[,"Rank4"],3)
+colnames(labelsEukN)<-"labels"
 
+#replace tax table 
+tax_table(datEukN5)<-cbind(tax_table(datEukN5),labelsEukN)
+tax_table(datEukN4)<-cbind(tax_table(datEukN4),labelsEukN)
 
 
 
@@ -141,28 +148,27 @@ otufileITS <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Ni
 head(tax_table(otufileITS))
 
 #Import mapping and tree file
-mapITS<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/ITS_Niwot_20072015_All_MapFile.txt")
+mapITS<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/ITS_Niwot_20072015_All_MapFilenewlomehi.txt")
 
 datITS<-merge_phyloseq(otufileITS,mapITS)
 
 #rarefy and transform to relative abundance
 min(sample_sums(datITS))#rarefy to 999
-datITSr<-rarefy_even_depth(datITS,sample.size=min(sample_sums(datITS)),rngseed=10,replace=F) #5596 OTUs were removed because they are no longer present in any sample after random subsampling
-datITSr2 = transform_sample_counts(datITSr, function(x) x/sum(x) )
+datITS2<-rarefy_even_depth(datITS,sample.size=min(sample_sums(datITS)),rngseed=10,replace=F) #5596 OTUs were removed because they are no longer present in any sample after random subsampling
+datITS3 = transform_sample_counts(datITS2, function(x) x/sum(x) )
 
-head(tax_table(datITSr))
-unique(tax_table(datITSr)[,"Rank2"])
+head(tax_table(datITS3))
+unique(tax_table(datITS3)[,"Rank2"])
 
 #remove the k__ with substring
-labelsITS<-substring(tax_table(datITSr)[,"Rank1"],4)
+labelsITS<-substring(tax_table(datITS3)[,"Rank1"],4)
 
 colnames(labelsITS)<-"labels"
 
-#replace tax table 
-tax_table(datITSr)<-cbind(tax_table(datITSr),labelsITS)
+#replace tax table, datITS3 (relativized) datITS2 (not relativized)
+tax_table(datITS3)<-cbind(tax_table(datITS3),labelsITS)
+tax_table(datITS2)<-cbind(tax_table(datITS2),labelsITS)
 
-temp<-as.data.frame(sample_data(datITS))
-sort(as.numeric(as.character(temp$Sample_name)))
 
 
 
@@ -175,7 +181,7 @@ otufileBac <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Ni
 head(tax_table(otufileBac))
 
 #Import mapping and tree file
-mapBac<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/515BC_Niwot_20072015_All_MapFile.txt")
+mapBac<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MappingFiles/515BC_Niwot_20072015_All_MapFilenewlomehi.txt")
 
 treeBac<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Bact/16S_ALL_truncate_97_rep_set_filtsingS2015nonchimeras_sinaaln.tre")
 
@@ -183,24 +189,59 @@ datBac<-merge_phyloseq(otufileBac,mapBac,treeBac)
 
 #rarefy and transform to relative abundance
 min(sample_sums(datBac))#rarefy to 6780
-datBacr<-rarefy_even_depth(datBac,sample.size=min(sample_sums(datBac)),rngseed=10,replace=F) #11966 OTUs were removed because they are no longer present in any sample after random subsampling
-datBacr2 = transform_sample_counts(datBacr, function(x) x/sum(x) )
+datBac2<-rarefy_even_depth(datBac,sample.size=min(sample_sums(datBac)),rngseed=10,replace=F) #11966 OTUs were removed because they are no longer present in any sample after random subsampling
+datBac3 = transform_sample_counts(datBac2, function(x) x/sum(x) )
 
-tax_table(datBacr)
-unique(tax_table(datBacr)[,"Rank2"])
+tax_table(datBac3)
+unique(tax_table(datBac3)[,"Rank2"])
 
 #remove the __ with substring
-labelsBac<-substring(tax_table(datBacr)[,"Rank2"],3)
+labelsBac<-substring(tax_table(datBac3)[,"Rank2"],3)
 
 colnames(labelsBac)<-"labels"
 
-#replace tax table 
-tax_table(datBacr)<-cbind(tax_table(datBacr),labelsBac)
-tax_table(datBacr2)<-cbind(tax_table(datBacr),labelsBac)
+#replace tax table, datBac3 (relativized) datBac2 (not relativized)
+tax_table(datBac2)<-cbind(tax_table(datBac2),labelsBac)
+tax_table(datBac3)<-cbind(tax_table(datBac3),labelsBac)
 
-#make otu table 10:52-11:02 (takes 10 min)
-datBacr2otu<-cbind(sample_data(datBacr2),t(otu_table(datBacr2)))
-datBacr2otu$Sample_name<-as.numeric(as.character(datBacr2otu$Sample_name))
+
+
+
+
+###### Take out samples that aren't shared across all datasets ######
+#For euksS sample 81 did not amplify and 61 had low # reads. for euksN sample 33 and 56 did not have enough soil so were not done, and 78 had low # reads. for ITS 126 didnt amplify. for bacteria, samples 5,34,126 did not amplify. should have 90 samples left
+#Files: datBac2, datBac3, datEukN4, datEukN5, datEukS3, datEukS4, datITS2, datITS3
+
+#notes: it looks like both prune_samples and subset_samples do NOT remove taxa that have an abundance of 0 after the samples are removed.
+#"%w/o%" <- function(x, y) x[!x %in% y] #that function is not exactly what i wanted, it subsets the list rather than returning indices. this is how I would do it which(!test%in%notlist) except that I can't seem to access the sample_data in the prune_samples code
+#notlist<-c(81,61,33,56,78,126,5,34)
+
+datBac2f <- subset_samples(datBac2,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datBac3f <- subset_samples(datBac3,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+datEukN4f <- subset_samples(datEukN4,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datEukN5f <- subset_samples(datEukN5,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+datEukS3f <- subset_samples(datEukS3,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datEukS4f <- subset_samples(datEukS4,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+datITS2f <- subset_samples(datITS2,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datITS3f <- subset_samples(datITS3,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+
+
+#make otu tables (bact takes 10 min)
+datBacr3fotu<-cbind(sample_data(datBac3f),t(otu_table(datBac3f)))
+datBacr3fotu$Sample_name<-as.numeric(as.character(datBacr3fotu$Sample_name))
+
+datEukN5fotu<-cbind(sample_data(datEukN5f),t(otu_table(datEukN5f)))
+datEukN5fotu$Sample_name<-as.numeric(as.character(datEukN5fotu$Sample_name))
+
+datEukS4fotu<-cbind(sample_data(datEukS4f),t(otu_table(datEukS4f)))
+datEukS4fotu$Sample_name<-as.numeric(as.character(datEukS4fotu$Sample_name))
+
+datITS3fotu<-cbind(sample_data(datITS3f),t(otu_table(datITS3f)))
+datITS3fotu$Sample_name<-as.numeric(as.character(datITS3fotu$Sample_name))
 
 
 
@@ -208,16 +249,25 @@ datBacr2otu$Sample_name<-as.numeric(as.character(datBacr2otu$Sample_name))
 
 ###### Filter data sets for network analysis ######
 #Follwing Widder et al 2014 PNAS
-#files: datEukr6otu, datBacr2 or datBacr2otu
+#files: datBacr3fotu datEukN5fotu datEukS4fotu datITS3fotu
 
 #take out doubletons and singletons
-datEukr7otu<-cbind(datEukr6otu[,1:31],datEukr6otu[,((which(colSums(datEukr6otu[,32:dim(datEukr6otu)[2]]>0)>2))+31)])
-datBacr3otu<-cbind(datBacr2otu[,1:31],datBacr2otu[,((which(colSums(datBacr2otu[,32:dim(datBacr2otu)[2]]>0)>2))+31)])
+datBacr3fotu2<-cbind(datBacr3fotu[,1:31],datBacr3fotu[,((which(colSums(datBacr3fotu[,32:dim(datBacr3fotu)[2]]>0)>2))+31)])
+
+datEukN5fotu2<-cbind(datEukN5fotu[,1:31],datEukN5fotu[,((which(colSums(datEukN5fotu[,32:dim(datEukN5fotu)[2]]>0)>2))+31)])
+
+datEukS4fotu2<-cbind(datEukS4fotu[,1:31],datEukS4fotu[,((which(colSums(datEukS4fotu[,32:dim(datEukS4fotu)[2]]>0)>2))+31)])
+
+datITS3fotu2<-cbind(datITS3fotu[,1:31],datITS3fotu[,((which(colSums(datITS3fotu[,32:dim(datITS3fotu)[2]]>0)>2))+31)])
 
 #filter out taxa that have a summed relative abundance of <.002 (.2%)
-datEukr8otu<-cbind(datEukr7otu[,1:31],datEukr7otu[,((which(colSums(datEukr7otu[,32:dim(datEukr7otu)[2]])>0.002))+31)]) #2084 otu
-datBacr4otu<-cbind(datBacr3otu[,1:31],datBacr3otu[,((which(colSums(datBacr3otu[,32:dim(datBacr3otu)[2]])>0.002))+31)]) #3903 otu
+datBacr3fotu3<-cbind(datBacr3fotu2[,1:31],datBacr3fotu2[,((which(colSums(datBacr3fotu2[,32:dim(datBacr3fotu2)[2]])>0.002))+31)]) #3772 otu
 
+datEukN5fotu3<-cbind(datEukN5fotu2[,1:31],datEukN5fotu2[,((which(colSums(datEukN5fotu2[,32:dim(datEukN5fotu2)[2]])>0.002))+31)]) #233 otu
+
+datEukS4fotu3<-cbind(datEukS4fotu2[,1:31],datEukS4fotu2[,((which(colSums(datEukS4fotu2[,32:dim(datEukS4fotu2)[2]])>0.002))+31)]) #1498 otu
+
+datITS3fotu3<-cbind(datITS3fotu2[,1:31],datITS3fotu2[,((which(colSums(datITS3fotu2[,32:dim(datITS3fotu2)[2]])>0.002))+31)]) #1125 otu
 
 
 
@@ -233,54 +283,7 @@ datBacr4otu<-cbind(datBacr3otu[,1:31],datBacr3otu[,((which(colSums(datBacr3otu[,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-#I can't extract nematode samples OTUs because the holozoa do not have labels in the mapping file. tax_table2 is the original tax table with full line of taxononmy Eukaryota_Opisthokonta_Nucletmycea_Fungi_Dikarya_Ascomycota_Pezizomycotina_Sordariomycetes_Hypocreales
-#all taxa in the file going into the network analysis (not rarefied but doesn't matter)
-temp3<-rownames(tax_table(dats10)) 
-
-#full taxonomies
-head(tax_table2)
-temptax<-as.character(tax_table2)
-ind<-grep("Nematoda",temptax)
-temp2<-tax_table2[ind,]
-nematodeids<-rownames(temp2)
-
-intersect(temp,nematodeids) #there are no nematodes present in the otufile going into network analysis
-length(union(temp,nematodeids))
-
-#checking that there are still nematodes in the original 2015 subset file, they are present in dat and dats but not dats2
-temp<-rownames(otu_table(dats))
-intersect(temp,nematodeids)
-
-temp <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euk_ALL_97_OTU_filtsing.biom")
-dim(tax_table(temp))
-dim(otu_table(temp))
-
-ind<-which(rownames(otu_table(temp))=="denovo244871")
-tax_table(temp)[ind,] #it imported correctly and has holozoa in the label
-
-#after my taxonomy rearrangement what did it do? that is correct
-tax_table(otufile)[ind,]
-
-#
-
-
-
-
-
-
-
+###have not done below yet
 
 
 
