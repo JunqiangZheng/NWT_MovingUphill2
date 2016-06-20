@@ -1,10 +1,11 @@
 
 #######Read in OTU data#######
 #files:
-#Euks no metazoa no fungi 97%
-#Euks metazoa 97%
+#Euks no metazoa no fungi 97%    otufileEukS
+#Euks metazoa 97%    otufileEukN
 #Fungi ITS 97%
 #Bacteria 97%
+#Euks metazoa 99%
 
 ##### Read in euk files, filtered with singletons removed #####
 otufileEukS <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantEukSoil2015nometazoanfungising.biom")
@@ -22,12 +23,26 @@ treeEukN<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_K
 datEukS<-merge_phyloseq(otufileEukS,mapEuk,treeEukS)
 datEukN<-merge_phyloseq(otufileEukN,mapEuk,treeEukN)
 
+
+#****
+#take out other samples for final reads and OTU counts
+datEukSfincount<-subset_samples(datEukS,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datEukSfincount2<-filter_taxa(datEukSfincount, function(x) sum(x) > (0), prune=T)
+sum(otu_table(datEukSfincount2))
+
+datEukNfincount<-subset_samples(datEukN,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datEukNfincount2<-filter_taxa(datEukNfincount, function(x) sum(x) > (0), prune=T)
+sum(otu_table(datEukNfincount2))
+#****
+
+
 #remove a few samples, sample 2A for nematodes (rep), sample N.2A has only 3 otus in it and they all are abundant in other samples so it doesn't affect single read count
 datEukN2 <- prune_samples(sample_names(datEukN)!="N.2A.2015", datEukN)
 #sample 78 for nematodes (it only had 164 reads)
 datEukN3 <- prune_samples(sample_names(datEukN2)!="N.78.2015", datEukN2)
 #maybe 61 which has 489 reads for the soil dataset
 datEukS2 <- prune_samples(sample_names(datEukS)!="S.61.2015", datEukS)
+
 
 #rarefy and transform to relative abundance
 min(sample_sums(datEukS2))#rarefy to 808
@@ -143,6 +158,10 @@ tax_table(datEukN4)<-cbind(tax_table(datEukN4),labelsEukN)
 
 
 
+
+
+
+
 ##### Read in ITS files, filtered with singletons removed #####
 otufileITS <-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/ITS/ITS_ALL_97_OTU_tablefiltsingnonchimericFunSoil2015sing.biom")
 head(tax_table(otufileITS))
@@ -152,6 +171,13 @@ mapITS<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Docu
 
 datITS<-merge_phyloseq(otufileITS,mapITS)
 
+#****
+#take out other samples for final reads and OTU counts
+datITSfincount<-subset_samples(datITS,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datITSfincount2<-filter_taxa(datITSfincount, function(x) sum(x) > (0), prune=T)
+sum(otu_table(datITSfincount2))
+#****
+
 #rarefy and transform to relative abundance
 min(sample_sums(datITS))#rarefy to 999
 datITS2<-rarefy_even_depth(datITS,sample.size=min(sample_sums(datITS)),rngseed=10,replace=F) #5596 OTUs were removed because they are no longer present in any sample after random subsampling
@@ -160,8 +186,8 @@ datITS3 = transform_sample_counts(datITS2, function(x) x/sum(x) )
 head(tax_table(datITS3))
 unique(tax_table(datITS3)[,"Rank2"])
 
-#remove the k__ with substring
-labelsITS<-substring(tax_table(datITS3)[,"Rank1"],4)
+#remove the p__ with substring
+labelsITS<-substring(tax_table(datITS3)[,"Rank2"],4)
 
 colnames(labelsITS)<-"labels"
 
@@ -186,6 +212,13 @@ mapBac<-import_qiime_sample_data("/Users/farrer/Dropbox/EmilyComputerBackup/Docu
 treeBac<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Bact/16S_ALL_truncate_97_rep_set_filtsingS2015nonchimeras_sinaaln.tre")
 
 datBac<-merge_phyloseq(otufileBac,mapBac,treeBac)
+
+#****
+#take out other samples for final reads and OTU counts
+datBacfincount<-subset_samples(datBac,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+datBacfincount2<-filter_taxa(datBacfincount, function(x) sum(x) > (0), prune=T)
+sum(otu_table(datBacfincount2))
+#****
 
 #rarefy and transform to relative abundance
 min(sample_sums(datBac))#rarefy to 6780
@@ -244,7 +277,7 @@ datITS3fotu<-cbind(sample_data(datITS3f),t(otu_table(datITS3f)))
 datITS3fotu$Sample_name<-as.numeric(as.character(datITS3fotu$Sample_name))
 
 
-
+pd16S<-pd(as.matrix(as.data.frame(t(otu_table(dat16Ss2tar)))),phy_tree(dat16Ss2tar),include.root=TRUE) #takes a few hours
 
 
 ###### Filter data sets for network analysis ######
@@ -278,51 +311,36 @@ datITS3fotu3<-cbind(datITS3fotu2[,1:31],datITS3fotu2[,((which(colSums(datITS3fot
 
 
 
+###### Make labelfile for network analysis ######
 
+#test if there is denovo name overlap, yes a ton, so relabel the denovos here and in the labels files
+namesBac<-names(datBacr3fotu3[,-c(1:31)])
+namesEukN<-names(datEukN5fotu3[,-c(1:31)])
+namesEukS<-names(datEukS4fotu3[,-c(1:31)])
+namesITS<-names(datITS3fotu3[,-c(1:31)])
+length(namesBac)
+length(namesITS)
+length(union(namesBac,namesITS))
+intersect(namesBac,namesITS)
 
+namesBac2 <- sub("^", "b", namesBac)
+namesEukN2 <- sub("^", "n", namesEukN)
+namesEukS2 <- sub("^", "s", namesEukS)
+namesITS2 <- sub("^", "i", namesITS)
 
+names(datBacr3fotu3)[-c(1:31)]<-namesBac2
+names(datEukN5fotu3)[-c(1:31)]<-namesEukN2
+names(datEukS4fotu3)[-c(1:31)]<-namesEukS2
+names(datITS3fotu3)[-c(1:31)]<-namesITS2
 
-
-###have not done below yet
-
-
-
-
-######Grouping by kingdom#####
-dats7<-transform_sample_counts(dats2, function(x) 100*x/sum(x) )
-dats8<-otu_table(dats7)
-dats9<-aggregate.data.frame(dats8,by=list(kingdomlabels=kingdomlabels),sum)
-rownames(dats9)<-dats9$kingdomlabels
-dats9$kingdomlabels<-NULL
-dats9kingdom<-cbind(sample_data(dats2),t(dats9))
-
-
-
-
-
-
-
-##### Nematode data #####
-#import_biom gave an error when I tried to import the biom file I created on the server from Dorota's otu text table. I can't figure out why it gave the error beacuse the text file looks exactly like the other text files that have all euk data.
-otufileN<-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Nematodes/Nema_OTUtable_species.csv")
-head(otufileN)
-otufileN1<-otufileN[,2:(dim(otufileN)[2]-1)]
-rownames(otufileN1)<-otufileN[,1]
-head(otufileN1)
-otufileN2 = otu_table(otufileN1, taxa_are_rows = TRUE)
-taxfileN<-matrix(otufileN[,dim(otufileN)[2]])
-rownames(taxfileN)<-otufileN[,1]
-colnames(taxfileN)<-"Rank1"
-taxfileN1 = tax_table(taxfileN)
-datN = phyloseq(otufileN2,taxfileN1,map,treefile)
-datN
-pdN<-pd(as.matrix(as.data.frame(t(otu_table(datN)))),phy_tree(datN),include.root=TRUE) 
-
-rownames(otu_table(otufile))[which(rownames(otu_table(otufile))%in%rownames(otufileN1))]
-treefile$tip.label[which(treefile$tip.label%in%rownames(otufileN1))]
-denovo120212 denovo68570
-tax_table(otufile)[which(rownames(tax_table(otufile))=="denovo256418")]
-#denovo256418
+labelsBac2<-labelsBac
+rownames(labelsBac2)<-sub("^", "b",rownames(labelsBac2))
+labelsEukN2<-labelsEukN
+rownames(labelsEukN2)<-sub("^", "n",rownames(labelsEukN2))
+labelsEukS2<-labelsEukS
+rownames(labelsEukS2)<-sub("^", "s",rownames(labelsEukS2))
+labelsITS2<-labelsITS
+rownames(labelsITS2)<-sub("^", "i",rownames(labelsITS2))
 
 
 
@@ -333,35 +351,98 @@ tax_table(otufile)[which(rownames(tax_table(otufile))=="denovo256418")]
 
 
 
+##### Read in euk 99% metazoa files, counts, from Dorota's cleanup #####
+otufile99Met <-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_AllMeatazoa_99_S11_OTU.csv")
+#it is not importing the biom file into phyloseq, I had this import problem before, when I tried to create a biom from txt file. So I will have to use the txt/csv file and then try to merge that
+#library("biom")
+#biom = read_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_AllMeatazoa_99_S11_OTU.biom") #this works but still cannot be merged with mapping files in phyloseq
+
+otufile99Met2<-as.matrix(otufile99Met[,2:97])
+rownames(otufile99Met2)<-otufile99Met[,1]
+taxtable99Met<-as.character(otufile99Met[,98])
+
+mylist<-strsplit(taxtable99Met, "; ", TRUE)
+mymatrix<-matrix(NA,nrow=268,ncol=8)
+for(i in 1:268){
+  mymatrix[i,1:length(mylist[[i]])]<-mylist[[i]]
+}
+colnames(mymatrix)<-c("Rank1","Rank2","Rank3","Rank4","Rank5","Rank6","Rank7","Rank8")
+rownames(mymatrix)<-otufile99Met[,1]
+
+taxtable99Met2<-mymatrix
+
+otufile99Met3 = otu_table(otufile99Met2, taxa_are_rows = TRUE)
+taxtable99Met3 = tax_table(taxtable99Met2)
 
 
+#Mapping ifle is already imported 
+mapEuk
+
+#Read in tree file
+tree99Met<-read_tree("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_AllMetazoa_truncate_99_sinaal.tre")
+
+dat99Met<-merge_phyloseq(otufile99Met3,taxtable99Met3,mapEuk,tree99Met)
+
+#remove craniata, there are no NAs so subset is fine, unique(tax_table(dat99Met2)[,"Rank4"])
+dat99Met2 = subset_taxa(dat99Met, Rank4 != "__Craniata")
 
 
+#****
+#take out other samples for final reads and OTU counts
+dat99Metfincount<-subset_samples(dat99Met2,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+dat99Metfincount2<-filter_taxa(dat99Metfincount, function(x) sum(x) > (0), prune=T)
+sum(otu_table(dat99Metfincount2))
+#****
+
+labels99Met<-substring(tax_table(dat99Met2)[,"Rank4"],3)
+
+colnames(labels99Met)<-"labels"
+
+#replace tax table in dat99Met2
+tax_table(dat99Met2)<-cbind(tax_table(dat99Met2),labels99Met)
+
+dat99Met2f <- subset_samples(dat99Met2,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+#make otu tables
+dat99Met2fotu<-cbind(sample_data(dat99Met2f),t(otu_table(dat99Met2f)))
+dat99Met2fotu$Sample_name<-as.numeric(as.character(dat99Met2fotu$Sample_name))
 
 
+###### Filter for network analysis ######
+#take out doubletons and singletons
+dat99Met2fotu2<-cbind(dat99Met2fotu[,1:31],dat99Met2fotu[,((which(colSums(dat99Met2fotu[,32:dim(dat99Met2fotu)[2]]>0)>2))+31)])
 
-#Haven't done this yet. I did this in the cooccurrencenetworkseuks file
-######Read in plant data to merge with order file######
-#plantcomp<-read.csv("/Users/farrer/Dropbox/Niwot Moving Uphill/Analysis/Niwot_MovingUpHill_comp2015.csv")
-#head(plantcomp)
-#names(plantcomp)[1]<-"Sample_name"
+#filter out taxa that have a summed relative abundance of <.002 (.2%)
+#transform to relative abundance
+dat99Met2fotu3 <- cbind(dat99Met2fotu2[,1:31],dat99Met2fotu2[32:129]/rowSums(dat99Met2fotu2[32:129]))
+min(colSums(dat99Met2fotu3[,32:129],na.rm=T))
+#all of the taxa have at least a rel abun of .2% (the smallest is 0.002088). so this step is not needed
 
-#Remove plant species only present in one or two plots
-#dim(plantcomp)
-#plantcomp2<-plantcomp[,colSums(plantcomp>0)>2]
-#plantlabels<-as.data.frame(cbind(colnames(plantcomp2)[2:56],"Plant"))
-#colnames(plantlabels)<-c("orders","kingdomlabels")
-
-#Merge plants with microbes, plantcomp is everything, plantcomp2 removes doubletons/singletons
-#microbplant<-merge(dats6order,plantcomp,"Sample_name",sort=F)
-#microbplant2<-merge(dats6order,plantcomp2,"Sample_name",sort=F)
-#head(microbplant)
+dat99Met2fotu2 #98 otu
 
 
+#Make label files and rename denovos in otutables
+names99Met<-names(dat99Met2fotu2[,-c(1:31)])
+
+names99Met2 <- sub("^", "m", names99Met)
+
+names(dat99Met2fotu2)[-c(1:31)]<-names99Met2
+
+labels99Met2<-labels99Met
+rownames(labels99Met2)<-sub("^", "m",rownames(labels99Met2))
+
+head(labels99Met2)
 
 
+#Labels for trophic groups for nematodes 99% only
+trophicgroup<-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_All_Nema_99_S111functionalgroup.csv")
+head(trophicgroup)
 
+labels99Nem<-data.frame(labels=trophicgroup[,3])
+rownames(labels99Nem)<-trophicgroup[,1]
+rownames(labels99Nem)<-sub("^", "m",rownames(labels99Nem))
 
+head(labels99Nem)
 
 
 
