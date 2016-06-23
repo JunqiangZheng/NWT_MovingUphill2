@@ -163,7 +163,13 @@ colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
 plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2  vertex.label=as.character(colorgraph1$orders)  
 #dev.off()
 
+eb<-edge.betweenness.community(graph1)
+membership(eb)
+plot(graph1,vertex.size=4,vertex.color=membership(eb),edge.curved=T,vertex.label=NA)
 
+eb<-walktrap.community(graph1)
+membership(eb)
+plot(graph1,vertex.size=4,vertex.color=membership(eb),edge.curved=T,vertex.label=NA)
 
 
 ##if i want to only plot vertices with >1 edge
@@ -222,8 +228,8 @@ colnames(verticesgraph3)<-"otu"
 colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
 sizegraph3<-ifelse(colorgraph3$labels=="Nematoda",8,6)
 shapegraph3<-ifelse(colorgraph3$labels=="Nematoda","square","circle")
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuNf4q.05r.5.pdf")
-plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.2,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph3,vertex.label=NA)# vertex.size=log(sizesgraph3$abun)*2 vertex.label=as.character(colorgraph3$orders)
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuNf4q.05r.5labels.pdf")
+plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.4,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph3)# ,vertex.label=NA
 title("Low density")
 #legend(0,1,c("Heterotrophic bacteria","Photosynthetic bacteria","Heterotrophic eukaryota","Photosynthetic eukaryota","Fungi","Plants","Bacterial feeder","Fungal feeder","Omnivore","Plant parasite","Root associate"),pt.bg=c("#7879BC","#94BA3C","#673482","#466D24","#F6EC32","#E95275","black","gray35","gray55","gray80","white"),bty="n",pch=c(rep(21,6),rep(22,5)),cex=.9)
 dev.off()
@@ -243,8 +249,8 @@ colnames(verticesgraph2)<-"otu"
 colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
 sizegraph2<-ifelse(colorgraph2$labels=="Nematoda",8,6)
 shapegraph2<-ifelse(colorgraph2$labels=="Nematoda","square","circle")
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuNf4q.05r.5.pdf")
-plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.2,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph2,vertex.label=NA)#)#vertex.size=log(sizesgraph2$abun)*2 vertex.label=as.character(colorgraph2$orders)
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuNf4q.05r.5labels.pdf")
+plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.4,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph2)#)#,vertex.label=NA
 title("Medium density")
 #dev.off()
 
@@ -263,8 +269,8 @@ colnames(verticesgraph1)<-"otu"
 colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
 sizegraph1<-ifelse(colorgraph1$labels=="Nematoda",8,6)#was 6,4
 shapegraph1<-ifelse(colorgraph1$labels=="Nematoda","square","circle")
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuNf4q.05r.5.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
-plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.2,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph1,vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2 ,vertex.label=as.character(colorgraph1$orders)
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuNf4q.05r.5labels.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
+plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.3,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph1)#,vertex.label=NA
 title("High density")
 #dev.off()
 

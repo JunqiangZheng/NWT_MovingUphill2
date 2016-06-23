@@ -132,6 +132,15 @@ listp2
 #with 10, you get fewer metazoa, but pattern is better
 #with 11, the pattern is best but it is hard to explain an 11 cutoff
 
-
+#see how many plant interactions are in the final network dataset
 edge_listsBEPp<-edge_listsBEP[which(edge_listsBEP$taxa1%in%labelsEukN4$otu|edge_listsBEP$taxa2%in%labelsEukN4$otu),]
 dim(edge_listsBEPm)
+edge_listsBEPp<-edge_listsBEP[which(edge_listsBEP$taxa1%in%labelsPlant2$otu|edge_listsBEP$taxa2%in%labelsPlant2$otu),]
+dim(edge_listsBEPp)
+head(edge_listsBEPp)
+temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="me")[,3:4]
+temp
+temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
+temp
+
+

@@ -277,7 +277,56 @@ datITS3fotu<-cbind(sample_data(datITS3f),t(otu_table(datITS3f)))
 datITS3fotu$Sample_name<-as.numeric(as.character(datITS3fotu$Sample_name))
 
 
-pd16S<-pd(as.matrix(as.data.frame(t(otu_table(dat16Ss2tar)))),phy_tree(dat16Ss2tar),include.root=TRUE) #takes a few hours
+
+
+##### Phylogenetic diversity ######
+pdBac<-pd(as.matrix(datBacr3fotu[,-c(1:31)]),phy_tree(datBac3f),include.root=TRUE) #takes a few hours, started 3:45pm, finished ~midnight
+pdEukN<-pd(as.matrix(datEukN5fotu[,-c(1:31)]),phy_tree(datEukN5f),include.root=TRUE) #took 3 minutes
+pdEukS<-pd(as.matrix(datEukS4fotu[,-c(1:31)]),phy_tree(datEukS4f),include.root=TRUE) #took 5 minutes
+richITS<-as.data.frame(rowSums(datITS3fotu[,-c(1:31)]>0))
+pdMet<-pd(as.matrix(dat99Met2fotu[,-c(1:31)]),phy_tree(dat99Met2f),include.root=TRUE) #run code from metazoa section below first
+pdNem<-pd(as.matrix(dat99Met2fNemotu[,-c(1:31)]),phy_tree(dat99Met2fNem),include.root=TRUE) # I need to use root=T, if I use root=F it cannot calculate the diversity in a sample with only one taxon
+
+
+
+###### Grouping by kingdom/phylum #####
+
+datBac3fk<-aggregate.data.frame(otu_table(datBac3f),by=list(labels=tax_table(datBac3f)[,"labels"]),sum)
+rownames(datBac3fk)<-datBac3fk$labels
+datBac3fk$labels<-NULL
+datBac3fk2<-cbind(sample_data(datBac3f),t(datBac3fk))
+head(datBac3fk2)
+
+datEukN5fk<-aggregate.data.frame(otu_table(datEukN5f),by=list(labels=tax_table(datEukN5f)[,"labels"]),sum)
+rownames(datEukN5fk)<-datEukN5fk$labels
+datEukN5fk$labels<-NULL
+datEukN5fk2<-cbind(sample_data(datEukN5f),t(datEukN5fk))
+head(datEukN5fk2)
+
+datEukS4fk<-aggregate.data.frame(otu_table(datEukS4f),by=list(labels=tax_table(datEukS4f)[,"labels"]),sum)
+rownames(datEukS4fk)<-datEukS4fk$labels
+datEukS4fk$labels<-NULL
+datEukS4fk2<-cbind(sample_data(datEukS4f),t(datEukS4fk))
+head(datEukS4fk2)
+
+datITS3fk<-aggregate.data.frame(otu_table(datITS3f),by=list(labels=tax_table(datITS3f)[,"labels"]),sum)
+rownames(datITS3fk)<-datITS3fk$labels
+datITS3fk$labels<-NULL
+datITS3fk2<-cbind(sample_data(datITS3f),t(datITS3fk))
+head(datITS3fk2)
+
+
+dat99Met2fNem2<-transform_sample_counts(dat99Met2fNem, function(x) x/sum(x) )
+temp<-otu_table(dat99Met2fNem2)
+temp2<-temp[order(rownames(temp)),]
+labels99Nemr2<-labels99Nemr[order(rownames(labels99Nemr)),]
+dat99Met2fNem2k<-aggregate.data.frame(temp2,by=list(labels=labels99Nemr2$labels),sum)
+rownames(dat99Met2fNem2k)<-dat99Met2fNem2k$labels
+dat99Met2fNem2k$labels<-NULL
+dat99Met2fNem2k2<-cbind(sample_data(dat99Met2fNem2),t(dat99Met2fNem2k))
+colnames(dat99Met2fNem2k2)[32:38]<-c("Animal_feeder","Animal_parasite","Bacterial_feeder","Fungal_feeder","Omnivore","Plant_parasite","Root_associate")
+
+
 
 
 ###### Filter data sets for network analysis ######
@@ -394,6 +443,7 @@ dat99Metfincount2<-filter_taxa(dat99Metfincount, function(x) sum(x) > (0), prune
 sum(otu_table(dat99Metfincount2))
 #****
 
+
 labels99Met<-substring(tax_table(dat99Met2)[,"Rank4"],3)
 
 colnames(labels99Met)<-"labels"
@@ -401,11 +451,19 @@ colnames(labels99Met)<-"labels"
 #replace tax table in dat99Met2
 tax_table(dat99Met2)<-cbind(tax_table(dat99Met2),labels99Met)
 
+#final dataset for all metazoa
 dat99Met2f <- subset_samples(dat99Met2,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
+
+#final dataset for nematodes only
+dat99Met2fNem = subset_taxa(dat99Met2f, Rank4 == "__Nematoda")
+sum(otu_table(dat99Met2fNem)) #final count for nematodes only
 
 #make otu tables
 dat99Met2fotu<-cbind(sample_data(dat99Met2f),t(otu_table(dat99Met2f)))
 dat99Met2fotu$Sample_name<-as.numeric(as.character(dat99Met2fotu$Sample_name))
+
+dat99Met2fNemotu<-cbind(sample_data(dat99Met2fNem),t(otu_table(dat99Met2fNem)))
+dat99Met2fNemotu$Sample_name<-as.numeric(as.character(dat99Met2fNemotu$Sample_name))
 
 
 ###### Filter for network analysis ######
@@ -438,11 +496,16 @@ head(labels99Met2)
 trophicgroup<-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_All_Nema_99_S111functionalgroup.csv")
 head(trophicgroup)
 
+#for network figures
 labels99Nem<-data.frame(labels=trophicgroup[,3])
 rownames(labels99Nem)<-trophicgroup[,1]
 rownames(labels99Nem)<-sub("^", "m",rownames(labels99Nem))
 
-head(labels99Nem)
+#for relative abundance figures
+labels99Nemr<-data.frame(labels=trophicgroup[,3])
+rownames(labels99Nemr)<-trophicgroup[,1]
+labels99Nemr$otu<-trophicgroup[,1]
 
-
+#adding m labels to trophic group data.frame
+trophicgroup$otu2<-rownames(labels99Nem)
 

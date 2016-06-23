@@ -114,37 +114,107 @@ length(which(verticesgraphhi2$group=="PhotosyntheticEukaryota"|verticesgraphhi2$
 length(which(verticesgraphhi2$group=="Plant"))
 length(which(verticesgraphhi2$group=="Metazoa"))
 
-#intersection of edges of two graphs
+
+
+#Intersection of edges of two networks
 graph.intersection(graphlo,graphme)#union of the vertex names and an intersection of the edges
 graph.union(graphlo,graphme)
+#jaccard type similarity: intersection/union of edges
+96/3791
+#sorensons type similarity: 2*intersection/(sum of number of edges in each), I think I will go with sorensons it is more intuitive because it gives a value of .5 if half of the interactions in group 1 are shared (whereas jaccard gives a value of .25)
+2*96/(2077+1810)=0.049395
 
 graph.intersection(graphlo,graphhi)
 graph.union(graphlo,graphhi)
+2*43/(2077+1441)=0.024446
 
 graph.intersection(graphme,graphhi)
 graph.union(graphme,graphhi)
+2*47/(1810+1441)=0.02891
 
-#for plant only network (run the graph in the Plotting_Networks scripts)
-graph.intersection(graph1,graph2)
-graph.union(graph1,graph2)
+#intersection across all three plant density levels
+temp<-graph.intersection(graphlo,graphme)
+graph.intersection(temp,graphhi)
+3*9/(2077+1810+1441)=0.0050676
+
+#for nematode networks
+inputlo<-subset(edge_listsM2g,qval<.05&spearmanrho>.5&trt=="lo")[,3:4]
+graphlon<-simplify(graph.edgelist(as.matrix(inputlo),directed=FALSE))
+inputme<-subset(edge_listsM2g,qval<.05&spearmanrho>.5&trt=="me")[,3:4]
+graphmen<-simplify(graph.edgelist(as.matrix(inputme),directed=FALSE))
+inputhi<-subset(edge_listsM2g,qval<.05&spearmanrho>.5&trt=="hi")[,3:4]
+graphhin<-simplify(graph.edgelist(as.matrix(inputhi),directed=FALSE))
+
+graph.intersection(graphlon,graphmen)
+graph.intersection(graphmen,graphhin)
+graph.intersection(graphlon,graphhin)
+#graph.union(graphlon,graphmen)
 
 
-#intersection of vertices
-length(intersect(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphlo)))))
+
+#Intersection of vertices
+length(intersect(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphlo))))) #283
 length(union(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphlo)))))
+V(graphlo)
+V(graphme)
+2*283/(615+621)=0.4579
 
 length(intersect(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphhi)))))
 length(union(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphhi)))))
+V(graphme)
+V(graphhi)
+2*275/(615+716)=0.41322
 
 length(intersect(row.names(as.matrix(V(graphhi))),row.names(as.matrix(V(graphlo)))))
 length(union(row.names(as.matrix(V(graphhi))),row.names(as.matrix(V(graphlo)))))
+V(graphlo)
+V(graphhi)
+2*228/(621+716)=0.34106
+
+temp<-intersect(row.names(as.matrix(V(graphme))),row.names(as.matrix(V(graphlo))))
+intersect(temp,row.names(as.matrix(V(graphhi))))
+3*153/(615+621+716)=0.2351434
+
+#Taxa in low medium high networks
+row.names(as.matrix(V(graphlo)))
+row.names(as.matrix(V(graphme))) #SENFRE, MOSS
+row.names(as.matrix(V(graphhi))) #ANGGRA FESBRA CIRSCO
 
 
-tax_table(dats2)[rownames(tax_table(dats2))=="denovo215842",]
-tax_table(dats2)[rownames(tax_table(dats2))=="denovo12769",]
+#Nematode networks
+length(intersect(row.names(as.matrix(V(graphmen))),row.names(as.matrix(V(graphlon))))) #1 nematode
+intersect(row.names(as.matrix(V(graphmen))),row.names(as.matrix(V(graphlon))))
+V(graphlon)
+V(graphmen)
+2*1/(12+23)=0.05714286
+
+mdenovo281318
+trophicgroup[trophicgroup$X.OTU.ID=="denovo281318",]
+
+length(intersect(row.names(as.matrix(V(graphmen))),row.names(as.matrix(V(graphhin))))) #4 (3 nematodes and 1 bacteria)
+intersect(row.names(as.matrix(V(graphmen))),row.names(as.matrix(V(graphhin))))
+V(graphmen)
+V(graphhin)
+2*4/(23+86)=0.0733945
+
+length(intersect(row.names(as.matrix(V(graphlon))),row.names(as.matrix(V(graphhin))))) #3 nematodes
+intersect(row.names(as.matrix(V(graphlon))),row.names(as.matrix(V(graphhin))))
+V(graphlon)
+V(graphhin)
+2*3/(12+86)=0.061224
+
+temp<-intersect(row.names(as.matrix(V(graphmen))),row.names(as.matrix(V(graphlon))))
+intersect(temp,row.names(as.matrix(V(graphhin))))
+3*1/(12+23+86)
 
 
+#Taxa in low me hi nematode networks
+temp<-row.names(as.matrix(V(graphlon)))
+trophicgroup[trophicgroup$otu2%in%temp,]
 
+temp<-row.names(as.matrix(V(graphmen)))
+trophicgroup[trophicgroup$otu2%in%temp,]
 
-
+temp<-row.names(as.matrix(V(graphhin)))
+trophicgroup[trophicgroup$otu2%in%temp,]
 

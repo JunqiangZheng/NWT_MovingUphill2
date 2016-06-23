@@ -3,9 +3,9 @@
 setwd("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/NWT_MovingUphill2")
 setwd("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata")
 
-save.image("~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis5.Rdata") 
+save.image("~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis5.Rdata")  #alternate between 4 and 5
 
-load("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis3.Rdata")
+load("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis4.Rdata")
 
 
 #for data cleaning
@@ -21,7 +21,7 @@ library(doParallel)
 library(igraph)
 #library(fdrtool)
 library(ggplot2)
-#library(grid)
+library(grid) #for unit function in ggplot2 for legend 
 
 #for network stats
 library(NetIndices)
@@ -29,6 +29,7 @@ library(NetIndices)
 #for manipulating datasets for plotting 
 library(tidyr)
 library(dplyr)
+library(plotrix)
 
 detach(package:igraph)
 sessionInfo()
