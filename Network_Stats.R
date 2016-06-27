@@ -30,6 +30,9 @@ length(V(graphhi))#
 length(E(graphlo))#
 length(E(graphme))#
 length(E(graphhi))#
+length(E(graphlo))/length(V(graphlo))
+length(E(graphme))/length(V(graphme))
+length(E(graphhi))/length(V(graphhi))
 graph.density(graphlo)
 graph.density(graphme)
 graph.density(graphhi)
@@ -40,13 +43,21 @@ modularity(graphlo, membership(walktrap.community(graphlo)))
 modularity(graphme, membership(walktrap.community(graphme)))
 modularity(graphhi, membership(walktrap.community(graphhi)))
 
+#link denstiy, average number of links, not necessary
+graphlo.adj<-get.adjacency(graphlo,sparse=F,type="upper")# in older versions of igraph the default was sparse=F, but now you must specify, other wise you get a matrix of 1s and .s. if you don't use type=upper some metrics are multiplied by 2 because it is using the whole matrix which has double the info (not just upper or lower)
+graphlo.adj.properties<-GenInd(graphlo.adj)
+graphlo.adj.properties$N
+graphlo.adj.properties$Ltot
+graphlo.adj.properties$LD   
+
 #I should look into the clustering method more
 modularity(graphlo, membership(cluster_edge_betweenness(graphlo)))
 modularity(graphme, membership(cluster_edge_betweenness(graphme)))
 modularity(graphhi, membership(cluster_edge_betweenness(graphhi)))
 
-
-
+#checking graph density values, this checks, not sure why the person in stack overflow had problems with it.
+#density = mean degree / (n-1)
+mean(degree(graphme))/(vcount(graphme)-1)
 
 #get random transitivity values for hi me lo, this is just one random draw, could do many
 transitivity(erdos.renyi.game(length(V(graphlo)),length(E(graphlo)),type="gnm"))
@@ -218,3 +229,15 @@ trophicgroup[trophicgroup$otu2%in%temp,]
 temp<-row.names(as.matrix(V(graphhin)))
 trophicgroup[trophicgroup$otu2%in%temp,]
 
+#how many microbes they interacted wtih
+temp<-data.frame(otu2=sort(c(as.character(inputlo$taxa1),as.character(inputlo$taxa2))))
+temp2<-count(temp,otu2) #in plyr package
+merge(temp2,trophicgroup,"otu2")
+
+temp<-data.frame(otu2=sort(c(as.character(inputme$taxa1),as.character(inputme$taxa2))))
+temp2<-count(temp,otu2)
+merge(temp2,trophicgroup,"otu2")
+
+temp<-data.frame(otu2=sort(c(as.character(inputhi$taxa1),as.character(inputhi$taxa2))))
+temp2<-count(temp,otu2)
+merge(temp2,trophicgroup,"otu2")

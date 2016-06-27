@@ -208,6 +208,7 @@ temp<-edge_listsM2g %>%
   filter(taxa1=="mdenovo226304"|taxa2=="mdenovo226304")
 sort(temp$qval)    
 
-
-
+#ndenovo8036 was the EukN taxon in the high density nematode network
+edge_listsM2g
+tax_table(datEukN5)[rownames(tax_table(datEukN5))=="denovo8036",]
 

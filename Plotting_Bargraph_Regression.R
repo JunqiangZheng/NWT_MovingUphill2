@@ -162,8 +162,12 @@ mycols<-c("#4BC366",
           "#6F94DE") #blue)
 
 
+#doing anova on glomeromycota
+options(contrasts=c("contr.helmert","contr.poly"));options("contrasts")
 
-
+glom<-relALL %>%
+  filter(Taxa=="Glomeromycota")
+anova(lm(abun~lomehi,data=glom))
 
 
 

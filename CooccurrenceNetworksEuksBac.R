@@ -142,5 +142,5 @@ temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="me")[,3:4]
 temp
 temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
 temp
-
+tax_table(datEukS4)[rownames(tax_table(datEukS4))=="denovo55021"]
 
