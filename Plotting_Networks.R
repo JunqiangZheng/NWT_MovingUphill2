@@ -386,47 +386,49 @@ plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,ver
 
 
 #####Plant-microbe interactions#####
+#use edge_listsPlants, cutoff frequency is 5
 #extract only vertices that are connected to a plant in all plant densities to determine if plant correlations are still there
 #figure out why there is more richness in high plant density but the same number of network vertices - is the added diversity all low abundance?
 
 #Low density
-inputlo<-subset(edge_listsBEPc,qval<.05&spearmanrho>.5&trt=="lo")[,3:4]
+inputlo<-subset(edge_listsPlants,qval<.05&spearmanrho>.5&trt=="lo")[,3:4]
 dim(inputlo)
-inputlo2<-inputlo[which(inputlo$taxa1%in%plantlabels$otu|inputlo$taxa2%in%plantlabels$otu),]
-dim(inputlo2)
-graph3<-simplify(graph.edgelist(as.matrix(inputlo2),directed=FALSE))
+#inputlo2<-inputlo[which(inputlo$taxa1%in%plantlabels$otu|inputlo$taxa2%in%plantlabels$otu),]
+graph3<-simplify(graph.edgelist(as.matrix(inputlo),directed=FALSE))
 verticesgraph3<-as.data.frame(rownames(as.matrix(V(graph3))))
-colnames(verticesgraph3)<-"otuxy"
-colorgraph3<-merge(verticesgraph3,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbaceukf10q.005r.7.pdf")
-plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
+colnames(verticesgraph3)<-"otu"
+colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph3<-ifelse(colorgraph3$labels=="Plant",8,6)#was 6,4
+shapegraph3<-ifelse(colorgraph3$labels=="Plant","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantf5q.05r.5.pdf")
+plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapegraph3)#
 #dev.off()
 
 
 #Medium density
-inputme<-subset(edge_listsBEPc,qval<.05&spearmanrho>.5&trt=="me")[,3:4]
+inputme<-subset(edge_listsPlants,qval<.05&spearmanrho>.5&trt=="me")[,3:4]
 dim(inputme)
-inputme2<-inputme[which(inputme$taxa1%in%plantlabels$otu|inputme$taxa2%in%plantlabels$otu),]
-dim(inputme2)
-graph2<-simplify(graph.edgelist(as.matrix(inputme2),directed=FALSE))
+graph2<-simplify(graph.edgelist(as.matrix(inputme),directed=FALSE))
 verticesgraph2<-as.data.frame(rownames(as.matrix(V(graph2))))
-colnames(verticesgraph2)<-"otuxy"
-colorgraph2<-merge(verticesgraph2,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityplantconnectionsf10q.05r.5.pdf")
-plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#)#vertex.size=log(sizesgraph2$abun)*2
+colnames(verticesgraph2)<-"otu"
+colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph2<-ifelse(colorgraph2$labels=="Plant",8,6)#was 6,4
+shapegraph2<-ifelse(colorgraph2$labels=="Plant","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantf5q.05r.5.pdf")
+plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapegraph2)
 #dev.off()
 
 #High density
-inputhi<-subset(edge_listsBEPc,qval<.05&spearmanrho>.5&trt=="hi")[,3:4]
+inputhi<-subset(edge_listsPlants,qval<.05&spearmanrho>.5&trt=="hi")[,3:4]
 dim(inputhi)
-inputhi2<-inputhi[which(inputhi$taxa1%in%plantlabels$otu|inputhi$taxa2%in%plantlabels$otu),]
-dim(inputhi2)
-graph1<-simplify(graph.edgelist(as.matrix(inputhi2),directed=FALSE))
+graph1<-simplify(graph.edgelist(as.matrix(inputhi),directed=FALSE))
 verticesgraph1<-as.data.frame(rownames(as.matrix(V(graph1))))
-colnames(verticesgraph1)<-"otuxy" #change to "order" if doing things by order
-colorgraph1<-merge(verticesgraph1,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityplantconnectionsf10q.05r.5.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
-plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40")#,vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2
+colnames(verticesgraph1)<-"otu"
+colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph1<-ifelse(colorgraph1$labels=="Plant",8,6)#was 6,4
+shapegraph1<-ifelse(colorgraph1$labels=="Plant","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantf5q.05r.5.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
+plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph1,vertex.label=NA)#,vertex.label=NA
 #dev.off()
 
 

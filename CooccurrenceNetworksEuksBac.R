@@ -144,3 +144,13 @@ temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
 temp
 tax_table(datEukS4)[rownames(tax_table(datEukS4))=="denovo55021"]
 
+#extract plant-microbe interactions, for Katie
+edge_listsPlants1<-subset(edge_listsBEPa,ab1freq>5&ab2freq>5) 
+ind<-labelsall[which(labelsall$labels=="Plant"),]
+edge_listsPlants2<-edge_listsPlants1[which(edge_listsPlants1$taxa1%in%as.character(ind$otu)|edge_listsPlants1$taxa2%in%as.character(ind$otu)),]
+dim(edge_listsPlants1)
+dim(edge_listsPlants2)
+
+edge_listsPlants2$qval<-p.adjust(edge_listsPlants2$spearmanp.value,method="fdr")
+edge_listsPlants<-subset(edge_listsPlants2,spearmanrho>0)
+
