@@ -9,6 +9,11 @@ load("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Sta
 
 
 #for data cleaning
+
+#for installing phyloseq
+#source('http://bioconductor.org/biocLite.R')
+#biocLite('phyloseq')
+
 library(phyloseq)
 #packageVersion("phyloseq")
 library(picante) #for phylogenetic diversity

@@ -434,3 +434,7 @@ plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.c
 
 
 
+
+
+
+
