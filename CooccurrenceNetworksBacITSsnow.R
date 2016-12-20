@@ -3,7 +3,13 @@
 
 save.image("~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis_Snow.Rdata")  #
 
-#I had a problem with Git, I did a commit, but then it wouldn't sync because a .tmp file was over 100GB in size. I can't figure out how to uncommit, or I can't figure out how to delete that file
+load("~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis_Snow.Rdata")  #
+
+
+#I had a problem with Git, I did a commit, but then it wouldn't sync because a .RDataTmp file was over 100GB in size. I did the following in terminal to uncommit. In the future I need to not stage/commit that .RDataTmp file
+git commit -m “trying to undo my last commit when has a huge file in it“
+git reset HEAD~
+  
 
 #Read in microbe data. Input datasets are datBacr3fotu3, datEukN5fotu3, datEukS4fotu3, datITS3fotu3. they were relativized prior to doubletons/singletons/summed<.2% removal. 
 #comm.dataEukS<-datEukS4fotu3
@@ -146,7 +152,11 @@ edge_listsBEPb<-subset(edge_listsBEPa,ab1freq>5&ab2freq>5) #this takes about 3 m
 dim(edge_listsBEPb)
 edge_listsBEPb$qval<-p.adjust(edge_listsBEPb$spearmanp.value,method="fdr")
 #edge_listsBEP<-subset(edge_listsBEPb,spearmanrho>0)
-edge_listsBEP<-edge_listsBEPb
+
+#take moss out
+edge_listsBEPc<-subset(edge_listsBEPb,taxa1!="MOSS")
+
+edge_listsBEP<-edge_listsBEPc
 head(edge_listsBEP)
 dim(edge_listsBEP)
 min(edge_listsBEP$ab1freq)
@@ -170,12 +180,16 @@ graph3<-simplify(graph.edgelist(as.matrix(inputlo),directed=FALSE))
 verticesgraph3<-as.data.frame(rownames(as.matrix(V(graph3))))
 colnames(verticesgraph3)<-"otu"
 colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
+#change all bacteria colors to purple, and plants to green, fungi to pink?
+colorgraph3$color[which(colorgraph3$group=="PhotosyntheticBacteria")]<-"#7879BC"
+colorgraph3$color[which(colorgraph3$group=="Plant")]<-"#94BA3C"
 sizegraph3<-ifelse(colorgraph3$labels=="Plant",8,6)#was 6,4
 shapegraph3<-ifelse(colorgraph3$labels=="Plant","square","circle")
 linetype3<-ifelse(inputlo2$spearmanrho>0,1,2)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantf5q.05r.5.pdf")
-plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapegraph3,edge.lty=linetype3)#
-#dev.off()
+linecolor3<-ifelse(inputlo2$spearmanrho>0,"black","#E95275")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Proposals/NSFpreproposal2017/Figs/networklowsnow.pdf")
+plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=F,vertex.label=NA,vertex.shape=shapegraph3,edge.width=2,edge.color=linecolor3)#,edge.lty=linetype3,,edge.color="gray40"
+dev.off()
 sum(linetype3==1) #positive interactions
 sum(linetype3==2) #negative interactions
 sum(linetype3==2)/(sum(linetype3==1)+sum(linetype3==2))
@@ -188,12 +202,17 @@ graph2<-simplify(graph.edgelist(as.matrix(inputme),directed=FALSE))
 verticesgraph2<-as.data.frame(rownames(as.matrix(V(graph2))))
 colnames(verticesgraph2)<-"otu"
 colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
+#change all bacteria colors to purple, and plants to green, fungi to pink?
+colorgraph2$color[which(colorgraph2$group=="PhotosyntheticBacteria")]<-"#7879BC"
+colorgraph2$color[which(colorgraph2$group=="Plant")]<-"#94BA3C"
+#colorgraph2$color[which(colorgraph2$group=="Fungi")]<-"#E95275"
 sizegraph2<-ifelse(colorgraph2$labels=="Plant",8,6)#was 6,4
 shapegraph2<-ifelse(colorgraph2$labels=="Plant","square","circle")
-linetype2<-ifelse(inputme2$spearmanrho>0,1,2)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantf5q.05r.5.pdf")
-plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapegraph2,edge.lty=linetype2)
-#dev.off()
+linetype2<-ifelse(inputme2$spearmanrho>0,1,3)
+linecolor2<-ifelse(inputme2$spearmanrho>0,"black","#E95275")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Proposals/NSFpreproposal2017/Figs/networkmedsnow.pdf")
+plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=F,vertex.label=NA,vertex.shape=shapegraph2,edge.width=2,edge.color=linecolor2)#,edge.color="gray40",edge.lty=linetype2
+dev.off()
 sum(linetype2==1) #positive interactions
 sum(linetype2==2) #negative interactions
 sum(linetype2==2)/(sum(linetype2==1)+sum(linetype2==2))
@@ -206,17 +225,52 @@ graph1<-simplify(graph.edgelist(as.matrix(inputhi),directed=FALSE))
 verticesgraph1<-as.data.frame(rownames(as.matrix(V(graph1))))
 colnames(verticesgraph1)<-"otu"
 colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
+#change all bacteria colors to purple, and plants to green, fungi to pink?
+colorgraph1$color[which(colorgraph1$group=="PhotosyntheticBacteria")]<-"#7879BC"
+colorgraph1$color[which(colorgraph1$group=="Plant")]<-"#94BA3C"
+#colorgraph1$color[which(colorgraph1$group=="Fungi")]<-"#E95275"
 sizegraph1<-ifelse(colorgraph1$labels=="Plant",8,6)#was 6,4
 shapegraph1<-ifelse(colorgraph1$labels=="Plant","square","circle")
 linetype1<-ifelse(inputhi2$spearmanrho>0,1,2)
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantf5q.05r.5.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
-plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph1,vertex.label=NA,edge.lty=linetype1)#,vertex.label=NA
-#dev.off()
+linecolor1<-ifelse(inputhi2$spearmanrho>0,"black","#E95275")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Proposals/NSFpreproposal2017/Figs/networkhisnow.pdf")
+plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=F,vertex.shape=shapegraph1,edge.width=2,vertex.label=NA,edge.color=linecolor1)#,edge.lty=linetype1,edge.color="gray40"
+dev.off()
 sum(linetype1==1) #positive interactions
 sum(linetype1==2) #negative interactions
 sum(linetype1==2)/(sum(linetype1==1)+sum(linetype1==2))
 
+#legend
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Proposals/NSFpreproposal2017/Figs/networklegend.pdf")
+plot(c(1,1),c(1,1))
+legend("topleft",c("Plant","Bacteria","Fungi"),pt.bg=c("#94BA3C","#7879BC","#F6EC32"),pch=c(22,21,21),bty="n",cex=1.4)
+legend("bottomleft",c("Positive interaction","Negative interaction"),lty=1,col=c(1,"#E95275"),lwd=2,bty="n",cex=1.4)
+dev.off()
+
+
 #potential interactions
+testlo<-subset(edge_listsBEP,trt=="lo")
+unique(testlo$taxa1)
+dim(testlo)
+testme<-subset(edge_listsBEP,trt=="me")
+unique(testme$taxa1)
+dim(testme)
 testhi<-subset(edge_listsBEP,trt=="hi")
+unique(testhi$taxa1)
+dim(testhi)
 
+#strenght of interaction
+mean(abs(inputlo2$spearmanrho))
+mean(abs(inputme2$spearmanrho))
+mean(abs(inputhi2$spearmanrho))
 
+mean(inputlo2$spearmanrho)
+mean(inputme2$spearmanrho)
+mean(inputhi2$spearmanrho)
+
+mean(abs(testlo$spearmanrho))
+mean(abs(testme$spearmanrho))
+mean(abs(testhi$spearmanrho))
+std.error(abs(testlo$spearmanrho))
+std.error(abs(testme$spearmanrho))
+std.error(abs(testhi$spearmanrho))
