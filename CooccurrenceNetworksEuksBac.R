@@ -50,6 +50,16 @@ length(which(lomehiALL=="hi"))
 
 trts<-as.vector(levels(lomehiALL))
 
+#see what plant diversity (richness) levels are in the lo me hi categories
+comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="lo")]# range 0-28
+comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="me")]# range 31-80
+comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="hi")]# range 81-739
+comm.dataALL$Plant_Div[which(comm.dataALL$lomehi=="lo")]# range 0-8, mean 2.13
+comm.dataALL$Plant_Div[which(comm.dataALL$lomehi=="me")]# range 3-14, mean 6.52
+comm.dataALL$Plant_Div[which(comm.dataALL$lomehi=="hi")]# range 7-26, mean 14.90
+
+cor.test(comm.dataALL$Plant_Dens,comm.dataALL$Plant_Div)
+
 
 #Setup parallel backend to use 4 processors
 cl<-makeCluster(4)
