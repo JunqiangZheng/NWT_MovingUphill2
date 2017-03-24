@@ -117,11 +117,20 @@ verticesgraph3<-as.data.frame(rownames(as.matrix(V(graph3))))
 colnames(verticesgraph3)<-"otu"
 colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #sizesgraph3<-merge(verticesgraph3,vertexsizes3,"otu",sort=F)
+sizesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,8,4)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6.pdf")
 plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
 #dev.off()
 
-plot(graph3,vertex.size=ifelse(verticesgraph3$otu=="bdenovo193772",10,4),vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
+#sized by hubs
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehub.pdf")
+plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black"))#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
+#colored by module
+
+colorgraph3b<-membership(cluster_edge_betweenness(graphlo))
+plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3b,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
+
 
 
 
@@ -140,10 +149,15 @@ verticesgraph2<-as.data.frame(rownames(as.matrix(V(graph2))))
 colnames(verticesgraph2)<-"otu"
 colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #sizesgraph2<-merge(verticesgraph2,vertexsizes2,"otuxy",sort=F)
+sizesgraph2<-ifelse(verticesgraph2$otu%in%hubsme,8,4)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6.pdf")
 plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph2$abun)*2 
 #dev.off()
 
+#sized by hubs
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sizehub.pdf")
+plot(graph2,vertex.size=sizesgraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.frame.color=ifelse(verticesgraph2$otu%in%hubsme,"white","black"))#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
 
 
 #High density
@@ -161,9 +175,20 @@ colnames(verticesgraph1)<-"otu" #
 colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #sizesgraph1<-merge(verticesgraph1,vertexsizes1,"otuxy",sort=F)
 #sizesgraph1<-ifelse(verticesgraph1$otuxy=="denovo559741",6,2)
+sizesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,8,4)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
 plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2  vertex.label=as.character(colorgraph1$orders)  
 #dev.off()
+
+#sized by hubs
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehub.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
+plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.frame.color=ifelse(verticesgraph1$otu%in%hubshi,"white","black"))#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
+
+#colored by module
+colorgraph1b<-membership(cluster_edge_betweenness(graphhi))
+plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1b,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
+
 
 eb<-edge.betweenness.community(graph1)
 membership(eb)

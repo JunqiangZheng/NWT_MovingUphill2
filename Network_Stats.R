@@ -198,7 +198,7 @@ zipioutputlo[order(zipioutputlo$pi,decreasing=T),]
 
 
 
-#Functoinalizing zi and pi calculations
+#Functionalizing zi and pi calculations
 #assuming the same modules as calculated above in "modularity"
 
 zipi<-function(inputfile,graphfile){
@@ -278,9 +278,20 @@ plot(zipioutputhi$pi,zipioutputhi$zi)
 abline(h=2.5)
 abline(v=.62)
 
-which()
+hubslo<-zipioutputlo$otu[which(zipioutputlo$zi>2.5)]
+hubsme<-zipioutputme$otu[which(zipioutputme$zi>2.5)]
+hubshi<-zipioutputhi$otu[which(zipioutputhi$zi>2.5)]
 
+which(zipioutputlo$zi>2.5)
+which(zipioutputme$zi>2.5)
+which(zipioutputhi$zi>2.5)
+which(zipioutputlo$pi>.62)
+which(zipioutputme$pi>.62)
+which(zipioutputhi$pi>.62)
 
+zipioutputlo[order(zipioutputlo$degree,decreasing=T),]
+
+zipioutputhi[which(zipioutputhi$zi>2.5),]
 
 
 
