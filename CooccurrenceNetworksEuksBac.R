@@ -50,7 +50,7 @@ length(which(lomehiALL=="hi"))
 
 trts<-as.vector(levels(lomehiALL))
 
-#see what plant diversity (richness) levels are in the lo me hi categories
+#see what plant diversity (really it is richness) levels are in the lo me hi categories
 comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="lo")]# range 0-28
 comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="me")]# range 31-80
 comm.dataALL$Plant_Dens[which(comm.dataALL$lomehi=="hi")]# range 81-739

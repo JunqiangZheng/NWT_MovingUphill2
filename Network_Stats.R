@@ -78,6 +78,11 @@ tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statslo1$otu,
 tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statsme1$otu,2)),]
 tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statshi1$otu,2)),]
 
+statslo2<-statslo[order(statslo$norm_degree,decreasing=T),]
+hist(statslo2$norm_degree) #highly non-normal, can't use standard deviation to get at "outliers"
+statshi2<-statshi[order(statshi$norm_degree,decreasing=T),]
+hist(statshi2$norm_degree)
+
 
 #Betweenness centrality
 statslo1<-statslo[order(statslo$betweenness,decreasing=T),][1:5,]
@@ -99,6 +104,185 @@ tax_table(otufile16S)[which(rownames(tax_table(otufile16S))%in%statshi1$otu),]
 labelsall[labelsall$otu=="denovo143776",]
 tax_table(dats2)[rownames(tax_table(dats2))=="denovo143776",]#euk
 tax_table(dat16Ss2)[rownames(tax_table(dat16Ss2))=="denovo462276",]
+
+
+
+#Calculating Zi and Pi by "hand"
+#info from bipartite pdf
+#any vertex linked with only one other vertex in a module will have an NA for zi b/c the sd=0 (or any vertex linked with the same number of taxa in each module)
+p = 1 - sum( (k.it/k.i)^2) # among-module connectivity = participation coefficient P in Guimerà & Amaral
+z = (k.is - ks.bar) / SD.ks # within-module degree
+k.is = number of links of i to other species in its own module s
+ks.bar = average k.is of all species in module  
+SD.ks = standard deviation of k.is of all species in module s
+k.it = number of links of species i to module t
+k.i = degree of species i
+#Note that for any species alone (in its level) in a module the z-value will be NaN, since then SD.ks is 0. This is a limitation of the way the z-value is defined (in multiples of degree/strength standard deviations).
+#Olesen et al. (2006) give critical c and z values of 0.62 and 2.5, respectively. Species exceeding these values are deemed connectors or hubs of a network. The justification of these thresholds remains unclear to me. They may also not apply for the quantitative version.
+
+#assuming the same modules as calculated above in "modularity"
+graphlo #has vertex links
+
+#graphlo Zi
+graphlomem<-membership(cluster_edge_betweenness(graphlo)) #621 vertices
+graphloedges<-cbind(as.character(inputlov[,3]),as.character(inputlov[,4]))
+
+zipioutputlo<-data.frame(otu=rownames(as.matrix(V(graphlo))),zi=rep(NA,length(graphlomem)))
+
+for(i in 1:max(graphlomem)){
+  #extract the vertices for each module
+  graphlovertices<-names(graphlomem)[which(graphlomem==i)]
+  
+  #subset only those vertices from the network
+  #E(graphlo)
+  #inputlov[,3:4] the dataframe with the two pairs as columns
+  ind<-which(graphloedges[,1]%in%graphlovertices&graphloedges[,2]%in%graphlovertices)
+  newgraphinput<-graphloedges[ind,]
+  #newgraph<-simplify(graph.edgelist(as.matrix(newgraphinput),directed=FALSE))
+  newgraph<-simplify(graph.edgelist(matrix(newgraphinput,ncol=2),directed=FALSE))
+  
+  #calculate zi for each vertex in the module
+  k.is<-degree(newgraph,normalized=F)
+  ks.bar<-mean(k.is)
+  SD.ks<-sd(k.is)
+  z <- (k.is - ks.bar) / SD.ks
+  
+  #put in correct slot in output file
+  ind<-match(names(z),zipioutputlo$otu)#ind <- ind[!is.na(ind)]
+  zipioutputlo$zi[ind]<-z
+}
+
+sort( zipioutputlo$zi)
+hist( zipioutputlo$zi)
+
+
+#graphlo pi
+
+zipioutputlo$pi<-NA
+zipioutputlo$degree<-NA
+
+
+for(i in 1:length(V(graphlo))){
+  #get a node
+  nodei<-names(graphlomem[i])
+  memi<-graphlomem[i]
+
+  #how many/which different nodes is it connected to
+  ind<-which(graphloedges[,1]%in%nodei|graphloedges[,2]%in%nodei)#matches degree(graphlo)[i]
+  connectorsi<-c(graphloedges[ind,1],graphloedges[ind,2])
+  connectorsi<-connectorsi[connectorsi!=nodei]
+  
+  #how many different modules is it connected to
+  #extract modules for each connector
+  temp<-print(graphlomem) #need to make this not actually print capture.output does weird things with rownmaes
+  ind<-match(connectorsi,names(temp))
+  connectorsi.m<-data.frame(graphlomem[ind])
+  
+  #extract only connectors of a different module
+  #connectorsi.m2<-data.frame(connectorsi.m[which(connectorsi.m!=memi)])
+  connectorsi.m$ones<-1
+  colnames(connectorsi.m)[1]<-"membership"
+  k.it<-aggregate.data.frame((connectorsi.m$ones),by=list(membership=connectorsi.m$membership),sum)$x
+  
+  #calculate ci
+  k.i<-degree(graphlo)[i]
+  p.i = 1 - sum( (k.it/k.i)^2)
+  zipioutputlo$pi[i]<-p.i
+  zipioutputlo$degree[i]<-k.i
+}
+
+sort(zipioutputlo$pi)
+hist(zipioutputlo$pi)
+zipioutputlo[order(zipioutputlo$pi,decreasing=T),]
+
+
+
+
+#Functoinalizing zi and pi calculations
+#assuming the same modules as calculated above in "modularity"
+
+zipi<-function(inputfile,graphfile){
+
+  # Zi
+  graphlomem<-membership(cluster_edge_betweenness(graphfile)) #621 vertices
+  graphloedges<-cbind(as.character(inputfile[,3]),as.character(inputfile[,4]))
+  
+  zipioutput<-data.frame(otu=rownames(as.matrix(V(graphfile))),zi=rep(NA,length(graphlomem)))
+  
+  for(i in 1:max(graphlomem)){
+    #extract the vertices for each module
+    graphlovertices<-names(graphlomem)[which(graphlomem==i)]
+    
+    #subset only those vertices from the network
+    ind<-which(graphloedges[,1]%in%graphlovertices&graphloedges[,2]%in%graphlovertices)
+    newgraphinput<-graphloedges[ind,]
+    newgraph<-simplify(graph.edgelist(matrix(newgraphinput,ncol=2),directed=FALSE))
+    
+    #calculate zi for each vertex in the module
+    k.is<-degree(newgraph,normalized=F)
+    ks.bar<-mean(k.is)
+    SD.ks<-sd(k.is)
+    z <- (k.is - ks.bar) / SD.ks
+    
+    #put in correct slot in output file
+    ind<-match(names(z),zipioutput$otu)#ind <- ind[!is.na(ind)]
+    zipioutput$zi[ind]<-z
+  }
+
+  #Pi
+  zipioutput$pi<-NA
+  zipioutput$degree<-NA
+
+  for(i in 1:length(V(graphfile))){
+    #get a node
+    nodei<-names(graphlomem[i])
+    memi<-graphlomem[i]
+    
+    #how many/which different nodes is it connected to
+    ind<-which(graphloedges[,1]%in%nodei|graphloedges[,2]%in%nodei)#matches degree(graphlo)[i]
+    connectorsi<-c(graphloedges[ind,1],graphloedges[ind,2])
+    connectorsi<-connectorsi[connectorsi!=nodei]
+    
+    #how many different modules is it connected to
+    #extract modules for each connector
+    temp<-print(graphlomem) #need to make this not actually print capture.output does weird things with rownmaes
+    ind<-match(connectorsi,names(temp))
+    connectorsi.m<-data.frame(graphlomem[ind])
+    
+    #extract only connectors of a different module
+    #connectorsi.m2<-data.frame(connectorsi.m[which(connectorsi.m!=memi)])
+    connectorsi.m$ones<-1
+    colnames(connectorsi.m)[1]<-"membership"
+    k.it<-aggregate.data.frame((connectorsi.m$ones),by=list(membership=connectorsi.m$membership),sum)$x
+    
+    #calculate ci
+    k.i<-degree(graphfile)[i]
+    p.i = 1 - sum( (k.it/k.i)^2)
+    zipioutput$pi[i]<-p.i
+    zipioutput$degree[i]<-k.i
+  }
+  return(zipioutput)
+}
+
+zipioutputlo<-zipi(inputlov,graphlo)
+zipioutputme<-zipi(inputmev,graphme)
+zipioutputhi<-zipi(inputhiv,graphhi)
+
+plot(zipioutputlo$pi,zipioutputlo$zi)
+abline(h=2.5)
+abline(v=.62)
+plot(zipioutputme$pi,zipioutputme$zi)
+abline(h=2.5)
+abline(v=.62)
+plot(zipioutputhi$pi,zipioutputhi$zi)
+abline(h=2.5)
+abline(v=.62)
+
+which()
+
+
+
+
 
 
 
@@ -124,6 +308,9 @@ length(which(verticesgraphhi2$group=="Fungi"))
 length(which(verticesgraphhi2$group=="PhotosyntheticEukaryota"|verticesgraphhi2$group=="NonphotosyntheticEukaryota"))
 length(which(verticesgraphhi2$group=="Plant"))
 length(which(verticesgraphhi2$group=="Metazoa"))
+
+
+
 
 
 

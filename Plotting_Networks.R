@@ -121,6 +121,8 @@ colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
 plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
 #dev.off()
 
+plot(graph3,vertex.size=ifelse(verticesgraph3$otu=="bdenovo193772",10,4),vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
+
 
 
 #Medium density

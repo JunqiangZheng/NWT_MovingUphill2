@@ -401,6 +401,7 @@ rownames(labelsITS2)<-sub("^", "i",rownames(labelsITS2))
 
 
 ##### Read in euk 99% metazoa files, counts, from Dorota's cleanup #####
+#I read in all metazoa, but then below I subset out only the nematodes
 otufile99Met <-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_AllMeatazoa_99_S11_OTU.csv")
 #it is not importing the biom file into phyloseq, I had this import problem before, when I tried to create a biom from txt file. So I will have to use the txt/csv file and then try to merge that
 #library("biom")
@@ -476,7 +477,7 @@ dat99Met2fotu3 <- cbind(dat99Met2fotu2[,1:31],dat99Met2fotu2[32:129]/rowSums(dat
 min(colSums(dat99Met2fotu3[,32:129],na.rm=T))
 #all of the taxa have at least a rel abun of .2% (the smallest is 0.002088). so this step is not needed
 
-dat99Met2fotu2 #98 otu
+dat99Met2fotu2 #98 otu of all metazoa
 
 
 #Make label files and rename denovos in otutables
@@ -490,6 +491,10 @@ labels99Met2<-labels99Met
 rownames(labels99Met2)<-sub("^", "m",rownames(labels99Met2))
 
 head(labels99Met2)
+
+#for manuscript, because I did the networks with all metazoa and then filtered out everything except nematodes. so how many nematodes ended up going into that analysis
+temp<-merge(data.frame(otu=rownames(labels99Met2),labels99Met2),data.frame(otu=colnames(dat99Met2fotu2[,-c(1:31)])))
+sum(temp$labels=="Nematoda") #63 nematode have a frequency >=3
 
 
 #Labels for trophic groups for nematodes 99% only
