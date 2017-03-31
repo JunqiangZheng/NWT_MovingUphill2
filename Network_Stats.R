@@ -291,8 +291,34 @@ which(zipioutputhi$pi>.62)
 
 zipioutputlo[order(zipioutputlo$degree,decreasing=T),]
 
+#extracting names of taxa for lo me hi
+zlobac<-zipioutputlo[which(zipioutputlo$zi>2.5),]
+zlobac2<-zlobac[which(substring(zlobac$otu,1,1)=="b"),]
+zlobac2$otu2<-substring(zlobac2$otu,2)
+
+zlofun<-zipioutputlo[which(zipioutputlo$zi>2.5),]
+zlofun2<-zlofun[which(substring(zlofun$otu,1,1)=="i"),]
+zlofun2$otu2<-substring(zlofun2$otu,2)
+
+zlobac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(zlobac2$otu,2)),])
+zlobac3$otu2<-rownames(zlobac3)
+zlobac4<-merge(zlobac3,zlobac2,"otu2")
+
+zlofun3<-data.frame(tax_table(datITS3)[which(rownames(tax_table(datITS3))%in%substring(zlofun2$otu,2)),])
+zlofun3$otu2<-rownames(zlofun3)
+zlofun4<-merge(zlofun3,zlofun2,"otu2")
+
+write.csv(zlobac4,"~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zlobac4.csv")
+
+
+
+
+
+zipioutputme[which(zipioutputme$zi>2.5),]
 zipioutputhi[which(zipioutputhi$zi>2.5),]
 
+tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statsme1$otu,2)),]
+tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statshi1$otu,2)),]
 
 
 
