@@ -312,7 +312,9 @@ which(zipioutputhi$pi>.62)
 
 zipioutputlo[order(zipioutputlo$degree,decreasing=T),]
 
-#extracting names of taxa for lo me hi
+#Zi: extracting names of taxa for lo me hi
+
+#Low
 zlobac<-zipioutputlo[which(zipioutputlo$zi>2.5),]
 zlobac2<-zlobac[which(substring(zlobac$otu,1,1)=="b"),]
 zlobac2$otu2<-substring(zlobac2$otu,2)
@@ -331,15 +333,23 @@ zlofun4<-merge(zlofun3,zlofun2,"otu2")
 
 write.csv(zlobac4,"~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zlobac4.csv")
 
+#Med, only bacteria
+zmebac<-zipioutputme[which(zipioutputme$zi>2.5),]
+zmebac2<-zmebac[which(substring(zmebac$otu,1,1)=="b"),]
+zmebac2$otu2<-substring(zmebac2$otu,2)
 
+zmebac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(zmebac2$otu,2)),])
+zmebac3$otu2<-rownames(zmebac3)
+zmebac4<-merge(zmebac3,zmebac2,"otu2")
 
+#Hi, only bacteria
+zhibac<-zipioutputhi[which(zipioutputhi$zi>2.5),]
+zhibac2<-zhibac[which(substring(zhibac$otu,1,1)=="b"),]
+zhibac2$otu2<-substring(zhibac2$otu,2)
 
-
-zipioutputme[which(zipioutputme$zi>2.5),]
-zipioutputhi[which(zipioutputhi$zi>2.5),]
-
-tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statsme1$otu,2)),]
-tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(statshi1$otu,2)),]
+zhibac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(zhibac2$otu,2)),])
+zhibac3$otu2<-rownames(zhibac3)
+zhibac4<-merge(zhibac3,zhibac2,"otu2")
 
 
 
