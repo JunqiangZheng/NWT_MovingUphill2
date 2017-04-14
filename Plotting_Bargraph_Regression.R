@@ -169,8 +169,19 @@ glom<-relALL %>%
   filter(Taxa=="Glomeromycota")
 anova(lm(abun~lomehi,data=glom))
 
+chyt<-datITS3fk2 %>% 
+  dplyr::select(lomehi,Sample_name, Plant_Div, Plant_Dens,Chytridiomycota) %>%
+  gather(Taxa,abun,Chytridiomycota) %>%
+  mutate(type="B. Fungi")%>%
+  group_by(lomehi)%>%
+  summarise(mean_abun=mean(abun),se_abun=std.error(abun))
+chyt$lomehi<-factor(chyt$lomehi, levels=c("lo","me","hi"))
 
-
-
-
+ggplot(chyt,aes(x=lomehi,y=mean_abun))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean_abun+se_abun, ymin=mean_abun-se_abun),width=.15,size=.5)
+    
+    
 

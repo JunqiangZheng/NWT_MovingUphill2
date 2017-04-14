@@ -274,10 +274,10 @@ zipioutputhi$density<-"High"
 plot(zipioutputlo$pi,zipioutputlo$zi)
 abline(h=2.5)
 abline(v=.62)
-plot(zipioutputme$pi,zipioutputme$zi)
+points(zipioutputme$pi,zipioutputme$zi, col=2)
 abline(h=2.5)
 abline(v=.62)
-plot(zipioutputhi$pi,zipioutputhi$zi)
+points(zipioutputhi$pi,zipioutputhi$zi,col=3)
 abline(h=2.5)
 abline(v=.62)
 
@@ -342,6 +342,8 @@ zmebac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%sub
 zmebac3$otu2<-rownames(zmebac3)
 zmebac4<-merge(zmebac3,zmebac2,"otu2")
 
+zmebac4[order(zmebac4$zi,decreasing=T),]
+
 #Hi, only bacteria
 zhibac<-zipioutputhi[which(zipioutputhi$zi>2.5),]
 zhibac2<-zhibac[which(substring(zhibac$otu,1,1)=="b"),]
@@ -350,6 +352,57 @@ zhibac2$otu2<-substring(zhibac2$otu,2)
 zhibac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(zhibac2$otu,2)),])
 zhibac3$otu2<-rownames(zhibac3)
 zhibac4<-merge(zhibac3,zhibac2,"otu2")
+
+zhibac4[order(zhibac4$zi,decreasing=T),]
+
+
+#Pi:
+
+#Low, only bacteria
+plobac<-zipioutputlo[which(zipioutputlo$pi>.62),]
+plobac2<-plobac[which(substring(plobac$otu,1,1)=="b"),]
+plobac2$otu2<-substring(plobac2$otu,2)
+
+plobac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(plobac2$otu,2)),])
+plobac3$otu2<-rownames(plobac3)
+plobac4<-merge(plobac3,plobac2,"otu2")
+
+plobac4[order(plobac4$pi,decreasing=T),]
+
+#Med, bacteria and fungi
+pmebac<-zipioutputme[which(zipioutputme$pi>.62),]
+pmebac2<-pmebac[which(substring(pmebac$otu,1,1)=="b"),]
+pmebac2$otu2<-substring(pmebac2$otu,2)
+
+pmebac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(pmebac2$otu,2)),])
+pmebac3$otu2<-rownames(pmebac3)
+pmebac4<-merge(pmebac3,pmebac2,"otu2")
+
+pmefun<-zipioutputme[which(zipioutputme$pi>.62),]
+pmefun2<-pmefun[which(substring(pmefun$otu,1,1)=="i"),]
+pmefun2$otu2<-substring(pmefun2$otu,2)
+
+pmefun3<-data.frame(tax_table(datITS3)[which(rownames(tax_table(datITS3))%in%substring(pmefun2$otu,2)),])
+pmefun3$otu2<-rownames(pmefun3)
+pmefun4<-merge(pmefun3,pmefun2,"otu2")
+
+
+#Hi, only bacteria
+phibac<-zipioutputhi[which(zipioutputhi$pi>.62),]
+phibac2<-phibac[which(substring(phibac$otu,1,1)=="b"),]
+phibac2$otu2<-substring(phibac2$otu,2)
+
+phibac3<-data.frame(tax_table(datBac3)[which(rownames(tax_table(datBac3))%in%substring(phibac2$otu,2)),])
+phibac3$otu2<-rownames(phibac3)
+phibac4<-merge(phibac3,phibac2,"otu2")
+
+phibac4[order(phibac4$pi,decreasing=T),]
+
+
+
+
+
+
 
 
 
