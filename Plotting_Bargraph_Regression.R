@@ -80,7 +80,6 @@ AIC(n2)
 
 colnames(datBac3fk2)[78]<-"WCHB1.60"
 names(which(colSums(datBac3fk2[,32:78])>4))
-
 relBac<-datBac3fk2 %>% 
   dplyr::select(lomehi,Sample_name, Plant_Div, Plant_Dens,Acidobacteria,Actinobacteria,Bacteroidetes,Chloroflexi,Cyanobacteria,Planctomycetes,Proteobacteria,Verrucomicrobia) %>%
   gather(Taxa,abun,Acidobacteria:Verrucomicrobia) %>%
@@ -102,7 +101,7 @@ names(which(colSums(datEukN5fk2[,32:43])>.7))
 relEukN<-datEukN5fk2 %>% 
   dplyr::select(lomehi,Sample_name, Plant_Div, Plant_Dens,Arthropoda,Nematoda,Rotifera,Tardigrada) %>%
   gather(Taxa,abun,Arthropoda,Nematoda,Rotifera,Tardigrada) %>%
-  mutate(type="D. Large Eukaryotes")
+  mutate(type="D. Soil mesofauna")
 
 names(which(colSums(dat99Met2fNem2k2[,32:39])>.7))
 relNem<-dat99Met2fNem2k2 %>% 
@@ -114,11 +113,19 @@ relNem<-dat99Met2fNem2k2 %>%
 relALL<-rbind(relBac,relITS,relEukS,relEukN,relNem)#
 head(relALL)
 
+#plotdata<-relALL %>%
+#  mutate(typeTaxa=paste(type,Taxa)) %>%
+#  group_by(Taxa,lomehi,type,typeTaxa) %>%
+#  summarise(mean_abun = mean(abun),se_abun=std.error(abun)) 
+#  #%>%filter(mean_abun>.04)
+
+#this was weird, maybe something changed in ggplot or dplyr because the colors were messing up and it was listing the legend in alfabetical order by taxa rather than the order in the "plotdata" dataframe. the workaroudn was to set the levels of plotdata$Taxa so they were correct
 plotdata<-relALL %>%
   mutate(typeTaxa=paste(type,Taxa)) %>%
-  group_by(Taxa,lomehi,type,typeTaxa) %>%
+  group_by(typeTaxa,Taxa,lomehi,type) %>%
   summarise(mean_abun = mean(abun),se_abun=std.error(abun)) 
-  #%>%filter(mean_abun>.04)
+plotdata$Taxa<-factor(plotdata$Taxa,levels=unique(plotdata$Taxa))
+
 as.data.frame(plotdata)
 plotdata$lomehi<-factor(plotdata$lomehi,levels=c("lo","me","hi"))
 
@@ -131,7 +138,8 @@ ggplot(plotdata,aes(x=lomehi,y=mean_abun,group=typeTaxa,color=Taxa))+
   geom_point(size=2)+
   geom_errorbar(aes(ymax = mean_abun+se_abun, ymin=mean_abun-se_abun),width=.15,size=.5)+
   scale_color_manual(values=mycols) +
-  facet_wrap(~type,nrow=3,scales="free")
+  facet_wrap(~type,nrow=3,scales="free")+
+  guides(col = guide_legend(ncol = 1))
 dev.off()
 
 #8 bacteria, 4 fungi, 4 small euks, 4 large euks, 5 nem
@@ -161,6 +169,40 @@ mycols<-c("#4BC366",
           "#D9A125", #yellow
           "#6F94DE") #blue)
 
+#scatter plots
+head(relALL)
+
+plotdata<-relALL %>%
+  mutate(typeTaxa=paste(type,Taxa))
+plotdata$Taxa<-factor(plotdata$Taxa,levels=unique(plotdata$Taxa))
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/relabuntaxavsplantdensitygroupsBFSLENscatter.pdf",width=6.5,height=6)#,width=4.3, height=5.3
+ggplot(plotdata,aes(x=log10(Plant_Dens+1),y=abun,group=typeTaxa,color=Taxa))+
+  labs(x = "",y="Relative abundance")+
+  theme_classic()+
+  theme(line=element_line(size=.3),text=element_text(size=10),strip.background = element_rect(colour="white", fill="white"),axis.line=element_line(color="gray30",size=.3),legend.key.size = unit(.6, "line"))+
+  scale_color_manual(values=mycols) +
+  geom_point(size=.2)+
+  geom_smooth(method=lm,se=F,size=.8) +
+  facet_wrap(~type,nrow=3,scales="free")+
+  guides(col = guide_legend(ncol = 1))
+dev.off()
+
+
+#Doing anova on all of the above taxa groups
+length(unique(relALL$Taxa))
+anovaoutput<-data.frame(Taxa=rep(NA,25),F=rep(NA,25),P=rep(NA,25))
+for(i in 1:25){
+  current.taxa<-unique(relALL$Taxa)[i]
+  temp<-relALL %>%
+    filter(Taxa==current.taxa)
+  mod<-anova(lm(abun~lomehi,data=temp))
+  anovaoutput[i,1]<-current.taxa
+  anovaoutput[i,2]<-mod$`F value`[1]
+  anovaoutput[i,3]<-mod$`Pr(>F)`[1]
+}
+anovaoutput$qval<-p.adjust(anovaoutput$P,method="fdr")
+anovaoutput$qval<-format(anovaoutput$qval,scientific=F)
 
 #doing anova on glomeromycota
 options(contrasts=c("contr.helmert","contr.poly"));options("contrasts")
@@ -184,4 +226,5 @@ ggplot(chyt,aes(x=lomehi,y=mean_abun))+
   geom_errorbar(aes(ymax = mean_abun+se_abun, ymin=mean_abun-se_abun),width=.15,size=.5)
     
     
-
+#looking into Ktedonobacteria in Chloroflexi
+#I would have to regenerate the dataset at the class level (above datasets are at the phylum level)

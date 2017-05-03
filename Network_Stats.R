@@ -303,6 +303,10 @@ hubslo<-zipioutputlo$otu[which(zipioutputlo$zi>2.5)]
 hubsme<-zipioutputme$otu[which(zipioutputme$zi>2.5)]
 hubshi<-zipioutputhi$otu[which(zipioutputhi$zi>2.5)]
 
+connectorslo<-zipioutputlo$otu[which(zipioutputlo$pi>.62)]
+connectorsme<-zipioutputme$otu[which(zipioutputme$pi>.62)]
+connectorshi<-zipioutputhi$otu[which(zipioutputhi$pi>.62)]
+
 which(zipioutputlo$zi>2.5)
 which(zipioutputme$zi>2.5)
 which(zipioutputhi$zi>2.5)
@@ -430,9 +434,18 @@ length(which(verticesgraphhi2$group=="PhotosyntheticEukaryota"|verticesgraphhi2$
 length(which(verticesgraphhi2$group=="Plant"))
 length(which(verticesgraphhi2$group=="Metazoa"))
 
+#number of bacteria, fungi, euks in networks as percentage of input
+#bacteria
+mean(c(546,551,651))/3772
 
+#fungi
+mean(c(35,29,25))/1125
 
+#small euks
+mean(c(40,33,34))/1498
 
+#large euks - mesofauna
+mean(c(0,0,3))/233
 
 
 #Intersection of edges of two networks
