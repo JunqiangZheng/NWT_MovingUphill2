@@ -367,11 +367,81 @@ plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.c
 title("High density")
 #dev.off()
 
+#network complexity
+length(E(graph3))/length(V(graph3))
+length(E(graph2))/length(V(graph2))
+length(E(graph1))/length(V(graph1))
 
 
 
 
 
+
+
+
+###### Plotting with Metazoa99 ######
+
+#####Metazoa-microbe interactions#####
+#plot only vertices that are connected to a metazoan99 in all plant densities
+#use edge_listsM2j
+
+#Low density
+inputlo<-subset(edge_listsM2j,qval<.05&spearmanrho>.5&trt=="lo")[,3:4]
+dim(inputlo)
+graph3<-simplify(graph.edgelist(as.matrix(inputlo),directed=FALSE))
+verticesgraph3<-as.data.frame(rownames(as.matrix(V(graph3))))
+colnames(verticesgraph3)<-"otu"
+colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph3<-ifelse(colorgraph3$labels=="Nematoda",8,6)
+shapegraph3<-ifelse(colorgraph3$labels=="Nematoda","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuNf4q.05r.5labels.pdf")
+plot(graph3,vertex.size=sizegraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.4,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph3)# ,vertex.label=NA
+title("Low density")
+plot(graph1)
+#legend(0,1,c("Heterotrophic bacteria","Photosynthetic bacteria","Heterotrophic eukaryota","Photosynthetic eukaryota","Fungi","Plants","Bacterial feeder","Fungal feeder","Omnivore","Plant parasite","Root associate"),pt.bg=c("#7879BC","#94BA3C","#673482","#466D24","#F6EC32","#E95275","black","gray35","gray55","gray80","white"),bty="n",pch=c(rep(21,6),rep(22,5)),cex=.9)
+#dev.off()
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/legend2.pdf")
+plot(c(1,1),c(1,1))
+legend("topright",c("Heterotrophic bacteria","Photosynthetic bacteria","Heterotrophic eukaryota","Photosynthetic eukaryota","Metazoa","Fungi","Plants","Bacterial feeder","Fungal feeder","Omnivore","Plant parasite","Root associate"),pt.bg=c("#7879BC","#94BA3C","#673482","#466D24","#ff9c34","#F6EC32","#E95275","black","gray30","gray55","gray80","white"),bty="n",pch=c(rep(21,7),rep(22,5)),cex=1.4)
+dev.off()
+
+
+#Medium density
+inputme<-subset(edge_listsM2j,qval<.05&spearmanrho>.5&trt=="me")[,3:4]
+dim(inputme)
+graph2<-simplify(graph.edgelist(as.matrix(inputme),directed=FALSE))
+verticesgraph2<-as.data.frame(rownames(as.matrix(V(graph2))))
+colnames(verticesgraph2)<-"otu"
+colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph2<-ifelse(colorgraph2$labels=="Nematoda",8,6)
+shapegraph2<-ifelse(colorgraph2$labels=="Nematoda","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuNf4q.05r.5labels.pdf")
+plot(graph2,vertex.size=sizegraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.4,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph2)#)#,vertex.label=NA
+title("Medium density")
+plot(graph2)
+#dev.off()
+
+temp<-subset(comm.dataALLn,lomehi=="me")
+cor.test(temp$ndenovo372907,temp$denovo300641,method="spearman",na.action=na.rm)
+plot(rank(temp$ndenovo372907),rank(temp$denovo300641))
+ndenovo361610
+
+
+#High density
+inputhi<-subset(edge_listsM2j,qval<.05&spearmanrho>.5&trt=="hi")[,3:4]
+dim(inputhi)
+graph1<-simplify(graph.edgelist(as.matrix(inputhi),directed=FALSE))
+verticesgraph1<-as.data.frame(rownames(as.matrix(V(graph1))))
+colnames(verticesgraph1)<-"otu" 
+colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
+sizegraph1<-ifelse(colorgraph1$labels=="Nematoda",8,6)#was 6,4
+shapegraph1<-ifelse(colorgraph1$labels=="Nematoda","square","circle")
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuNf4q.05r.5labels.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
+plot(graph1,vertex.size=sizegraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.3,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.shape=shapegraph1)#,vertex.label=NA
+title("High density")
+plot(graph1)
+#dev.off()
 
 
 
@@ -380,6 +450,7 @@ title("High density")
 
 
 ##### Plotting only Bacteria subset ######
+#I don't think I ever did this because I can't find anywhere where I created edge_listsBEP16Sc
 
 #Low density
 inputlo<-subset(edge_listsBEP16Sc,qval<.01&spearmanrho>.65&trt=="lo")[,3:4]#
@@ -431,15 +502,17 @@ plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,ver
 
 
 ##### Plotting only Eukaryote subset ######
+#use edge_listsEuks, make sure the dataset is loaded with the one for the correct frequency cutoff, 5 vs 10
 
 #Low density
-inputlo<-subset(edge_listsBEPEukc,qval<.05&spearmanrho>.6&trt=="lo")[,3:4]#
+inputlo<-subset(edge_listsEuks,qval<.01&spearmanrho>.6&trt=="lo")[,3:4]#
+inputlo<-subset(edge_listsEuks,qval<.05&spearmanrho>.5&trt=="lo")[,3:4]#
 dim(inputlo)
 graph3<-simplify(graph.edgelist(as.matrix(inputlo),directed=FALSE))
 verticesgraph3<-as.data.frame(rownames(as.matrix(V(graph3))))
-colnames(verticesgraph3)<-"otuxy"
-colorgraph3<-merge(verticesgraph3,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
-sizesgraph3<-ifelse(verticesgraph3$otuxy=="denovo559741",5,2)
+colnames(verticesgraph3)<-"otu"
+colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
+#sizesgraph3<-ifelse(verticesgraph3$otuxy=="denovo559741",5,2)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbaceukf10q.01r.65.pdf")
 plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
 #dev.off()
@@ -447,12 +520,13 @@ plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,ver
 
 
 #Medium density
-inputme<-subset(edge_listsBEPEukc,qval<.05&spearmanrho>.6&trt=="me")[,3:4]
+inputme<-subset(edge_listsEuks,qval<.01&spearmanrho>.6&trt=="me")[,3:4]
+inputme<-subset(edge_listsEuks,qval<.05&spearmanrho>.5&trt=="me")[,3:4]
 dim(inputme)
 graph2<-simplify(graph.edgelist(as.matrix(inputme),directed=FALSE))
 verticesgraph2<-as.data.frame(rownames(as.matrix(V(graph2))))
-colnames(verticesgraph2)<-"otuxy"
-colorgraph2<-merge(verticesgraph2,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
+colnames(verticesgraph2)<-"otu"
+colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #sizesgraph2<-merge(verticesgraph2,vertexsizes2,"otuxy",sort=F)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbaceukf10q.01r.65.pdf")
 plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph2$abun)*2
@@ -460,12 +534,13 @@ plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,ver
 
 
 #High density
-inputhi<-subset(edge_listsBEPEukc,qval<.05&spearmanrho>.6&trt=="hi")[,3:4]
+inputhi<-subset(edge_listsEuks,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
+inputhi<-subset(edge_listsEuks,qval<.05&spearmanrho>.5&trt=="hi")[,3:4]
 dim(inputhi)
 graph1<-simplify(graph.edgelist(as.matrix(inputhi),directed=FALSE))
 verticesgraph1<-as.data.frame(rownames(as.matrix(V(graph1))))
-colnames(verticesgraph1)<-"otuxy" #change to "order" if doing things by order
-colorgraph1<-merge(verticesgraph1,labelsall,"otuxy",all.y=F,all.x=F,sort=F)
+colnames(verticesgraph1)<-"otu" #change to "order" if doing things by order
+colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #sizesgraph1<-merge(verticesgraph1,vertexsizes1,"otuxy",sort=F)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbaceukf10q.01r.65.pdf") #f=frequency cutoff 5 included, r=rho cutoff .5
 plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2
@@ -473,7 +548,10 @@ plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,ver
 #plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2
 
 
-
+#network complexity
+length(E(graph3))/length(V(graph3))
+length(E(graph2))/length(V(graph2))
+length(E(graph1))/length(V(graph1))
 
 
 

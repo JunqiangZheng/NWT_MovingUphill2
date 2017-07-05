@@ -185,7 +185,7 @@ resultsM2<-results
 ##### Nematode correlations 2, including nematode-nematode interactions ######
 edge_listsM2<-cbind(pairs=paste(resultsM2$taxa1,resultsM2$taxa2),resultsM2)
 
-#take out metazoa 97% from the euks list
+#take out metazoa 97% from the euks list, this section can be skipped
 edge_listsM2a<-edge_listsM2[-which(edge_listsM2$taxa2%in%c(rownames(labelsEukN2))),]
 head(edge_listsM2a)
 dim(edge_listsM2a)
@@ -212,3 +212,12 @@ sort(temp$qval)
 edge_listsM2g
 tax_table(datEukN5)[rownames(tax_table(datEukN5))=="denovo8036",]
 
+
+##### Doing correlations with all metazoa99 not just nematodes #####
+#take out metazoa 97% from the euks list nothing from the Met99 list. this edgelist is much smaller than above since we are taking taxa out of the 99% portion of the data (each of the 99% gets paired with ~4000 of the 97% taxa, so taking one 99% taxon out removes a lot of interactions)
+ind<-labelsEukN2
+edge_listsM2h<-edge_listsM2[-which(edge_listsM2$taxa2%in%c(rownames(ind))),] #they are only in taxa 2
+
+edge_listsM2i<-subset(edge_listsM2h,ab1freq>4&ab2freq>4)
+edge_listsM2i$qval<-p.adjust(edge_listsM2i$spearmanp.value,method="fdr")
+edge_listsM2j<-subset(edge_listsM2i,spearmanrho>0)

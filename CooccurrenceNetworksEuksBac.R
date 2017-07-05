@@ -154,6 +154,7 @@ temp<-subset(edge_listsBEPp,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
 temp
 tax_table(datEukS4)[rownames(tax_table(datEukS4))=="denovo55021"]
 
+
 #extract plant-microbe interactions, for Katie
 edge_listsPlants1<-subset(edge_listsBEPa,ab1freq>5&ab2freq>5) 
 ind<-labelsall[which(labelsall$labels=="Plant"),]
@@ -164,3 +165,29 @@ dim(edge_listsPlants2)
 edge_listsPlants2$qval<-p.adjust(edge_listsPlants2$spearmanp.value,method="fdr")
 edge_listsPlants<-subset(edge_listsPlants2,spearmanrho>0)
 
+
+#extract euk-microbe interactions, for ms revision after Katie's comments
+edge_listsEuks1<-edge_listsBEP
+ind<-labelsall[which(labelsall$group%in%c("AF","AP","BF","FF","Fungi","Metazoa","NonphotosyntheticEukaryota","OM","PhotosyntheticEukaryota","Plant","PP","RA","unknown")),]
+ind<-labelsall[which(labelsall$group%in%c("Metazoa")),]
+edge_listsEuks2<-edge_listsEuks1[which(edge_listsEuks1$taxa1%in%as.character(ind$otu)|edge_listsEuks1$taxa2%in%as.character(ind$otu)),]
+dim(edge_listsEuks1)
+dim(edge_listsEuks2)
+head(edge_listsEuks2)
+edge_listsEuks<-edge_listsEuks2
+#I could re-adjust the P value but I won't at this point
+#edge_listsPlants2$qval<-p.adjust(edge_listsPlants2$spearmanp.value,method="fdr")
+#edge_listsPlants<-subset(edge_listsPlants2,spearmanrho>0)
+
+
+#extract euk-microbe interactions, looking for different cutoffs for freq and taxonomy
+edge_listsEuks1<-subset(edge_listsBEPa,ab1freq>4&ab2freq>4) 
+#ind<-labelsall[which(labelsall$group%in%c("AF","AP","BF","FF","Fungi","Metazoa","NonphotosyntheticEukaryota","OM","PhotosyntheticEukaryota","Plant","PP","RA","unknown")),]
+ind<-labelsall[which(labelsall$group%in%c("Metazoa")),]
+edge_listsEuks2<-edge_listsEuks1[which(edge_listsEuks1$taxa1%in%as.character(ind$otu)|edge_listsEuks1$taxa2%in%as.character(ind$otu)),]
+dim(edge_listsEuks1)
+dim(edge_listsEuks2)
+
+edge_listsEuks2$qval<-p.adjust(edge_listsEuks2$spearmanp.value,method="fdr")
+edge_listsEuks<-subset(edge_listsEuks2,spearmanrho>0)
+dim(edge_listsEuks)

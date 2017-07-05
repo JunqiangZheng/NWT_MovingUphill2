@@ -5,7 +5,7 @@ setwd("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&St
 
 save.image("~/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis5.Rdata")  #alternate between 4 and 5
 
-load("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis5.Rdata")
+load("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/MovingUphill2_Workspace_Analysis4.Rdata")
 
 
 #for data cleaning
