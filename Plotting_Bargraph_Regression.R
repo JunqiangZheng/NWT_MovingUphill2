@@ -228,3 +228,377 @@ ggplot(chyt,aes(x=lomehi,y=mean_abun))+
     
 #looking into Ktedonobacteria in Chloroflexi
 #I would have to regenerate the dataset at the class level (above datasets are at the phylum level)
+
+
+
+
+
+
+
+##### Specialists/generalists ######
+#input data, note these are not in order by sample
+datBacr3fotu
+datEukN5fotu
+datEukS4fotu
+datITS3fotu
+
+#Bacteria specialists/generalists
+bactspgenlo1<-subset(datBacr3fotu,lomehi=="lo")
+bactspgenlo2<-bactspgenlo1[,-c(1:31)]
+bactspgenlo3<-bactspgenlo2[,which(colSums(bactspgenlo2)>0)]
+bactspgenlo<-colnames(bactspgenlo3)
+length(bactspgenlo) #12023
+
+bactspgenme1<-subset(datBacr3fotu,lomehi=="me")
+bactspgenme2<-bactspgenme1[,-c(1:31)]
+bactspgenme3<-bactspgenme2[,which(colSums(bactspgenme2)>0)]
+bactspgenme<-colnames(bactspgenme3)
+length(bactspgenme) #14024
+
+bactspgenhi1<-subset(datBacr3fotu,lomehi=="hi")
+bactspgenhi2<-bactspgenhi1[,-c(1:31)]
+bactspgenhi3<-bactspgenhi2[,which(colSums(bactspgenhi2)>0)]
+bactspgenhi<-colnames(bactspgenhi3)
+length(bactspgenhi)#16688
+
+
+#generalist bacteria
+
+temp<-intersect(bactspgenlo,bactspgenme)
+bacttaxagen<-intersect(temp,bactspgenhi)
+length(bacttaxagen)
+#5911 taxa are shared across all communities
+3*5911/(12023+14024+16699)
+
+temp<-datBacr3fotu %>%
+  select(one_of(c("lomehi",bacttaxagen)))%>%
+  mutate(sum=rowSums(.[2:5912]))%>%
+  group_by(lomehi)%>%
+  summarise(mean=mean(sum),se=std.error(sum))%>%
+  mutate(lomehi=factor(lomehi,levels=c("lo","me","hi")))
+
+ggplot(temp,aes(x=lomehi,y=mean))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean+se, ymin=mean-se),width=.15,size=.5)
+
+
+#specialist bacteria
+
+temp<-setdiff(bactspgenlo,bactspgenme)
+bacttaxasplo<-setdiff(temp,bactspgenhi)
+length(bacttaxasplo)
+
+bactspgenlo3%>%
+  select(one_of(bacttaxasplo))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+  
+temp<-setdiff(bactspgenhi,bactspgenme)
+bacttaxasphi<-setdiff(temp,bactspgenlo)
+length(bacttaxasphi)
+
+bactspgenhi3%>%
+  select(one_of(bacttaxasphi))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+temp<-bactspgenlo3
+temp[which(temp==0,arr.ind=T)]<-NA
+min(temp,na.rm=T)
+
+library(scatterplot3d) 
+
+
+#investigating how abundance and frequency plays out across the data set - most species are rare, common species are found in all lo me and hi
+bactabun1<-cbind(lomehi=datBacr3fotu$lomehi,datBacr3fotu[,-c(1:31)])
+bactabun1[1:10,1:10]
+bactabun2<-aggregate.data.frame(bactabun1[,2:25412],by=list(bactabun1$lomehi),sum)
+dim(bactabun2)
+bactabun2[,1:10]
+bactabun3<-t(bactabun2[,-c(1)])
+bactabun3[1:10,];colnames(bactabun3)<-c("hi","lo","me")
+bactabun3[1:10,]
+bactabun4<-as.data.frame(bactabun3)
+#scatterplot3d(log(bactabun4$lo+.1),log(bactabun4$me+.1),log(bactabun4$hi+.1),type="h")
+head(bactabun4)
+bactabun4[ind,]*100
+
+bactfreq1<-data.frame(lomehi=as.character(datBacr3fotu$lomehi),ifelse(datBacr3fotu[,-c(1:31)]>0,1,0))
+bactfreq1[1:10,1:10]
+bactfreq2<-aggregate.data.frame(bactfreq1[,2:25412],by=list(bactfreq1$lomehi),sum)
+dim(bactfreq2)
+bactfreq2[,1:10]
+bactfreq3<-t(bactfreq2[,-c(1)])
+bactfreq3[1:10,];colnames(bactfreq3)<-c("hi","lo","me")
+bactfreq3[1:10,]
+bactfreq4<-as.data.frame(bactfreq3)
+#scatterplot3d(log(bactfreq4$lo+1),log(bactfreq4$me+1),log(bactfreq4$hi+1),type="h")
+head(bactfreq4)
+ind<-which(rowSums(bactfreq4)>9)
+length(ind)
+bactfreq4[ind,]
+
+#making the plot from barbaran et al, abun vs. freq
+plot(rowSums(bactfreq4),rowSums(bactabun4),log="y")
+plot(rowSums(bactfreq4),rowSums(bactabun4))
+
+
+#specialist = at least 75% (or other percent) of the abundance or frequency of a taxon is in one plant density bracket
+#generalist = in all plots and not as above
+
+#for abundance
+bactabun5<-bactabun4
+bactabun5$hip<-bactabun4$hi/rowSums(bactabun4)
+bactabun5$lop<-bactabun4$lo/rowSums(bactabun4)
+bactabun5$mep<-bactabun4$me/rowSums(bactabun4)
+head(bactabun5)
+
+#for frequency
+bactabun5<-bactfreq4
+bactabun5$hip<-bactfreq4$hi/rowSums(bactfreq4)
+bactabun5$lop<-bactfreq4$lo/rowSums(bactfreq4)
+bactabun5$mep<-bactfreq4$me/rowSums(bactfreq4)
+head(bactabun5)
+
+#then continue here for everything
+bactabun5$group<-NA
+ind<-which(bactabun5$hip>.75)
+bactabun5$group[ind]<-'hi'
+ind<-which(bactabun5$lop>.75)
+bactabun5$group[ind]<-'lo'
+ind<-which(bactabun5$mep>.75)
+bactabun5$group[ind]<-'me'
+
+bactabun5$class<-NA
+ind<-which(rowSums(bactabun5[,1:3]>0)==3)
+bactabun5$class[ind]<-"gen"
+ind<-which(bactabun5$group%in%c("lo","me","hi"))
+bactabun5$class[ind]<-"spe"
+#bactabun5[which(rowSums(bactabun5[,1:3]>0)==3),] #just a check that there are specialists that are present in all three groups
+
+#generalists
+bactgen<-rownames(bactabun5[which(bactabun5$class=="gen"),])
+
+temp<-datBacr3fotu %>%
+  select(one_of(c("lomehi",bactgen)))%>%
+  mutate(sum=rowSums(.[2:length(bactgen)+1]))%>%
+  group_by(lomehi)%>%
+  summarise(mean=mean(sum),se=std.error(sum))%>%
+  mutate(lomehi=factor(lomehi,levels=c("lo","me","hi")))
+
+ggplot(temp,aes(x=lomehi,y=mean))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean+se, ymin=mean-se),width=.15,size=.5)
+
+#specialists
+bacttaxasplo<-rownames(bactabun5[which(bactabun5$group=="lo"),])
+length(bacttaxasplo)
+
+templo<-datBacr3fotu%>%
+  select(one_of(bacttaxasplo))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+bacttaxaspme<-rownames(bactabun5[which(bactabun5$group=="me"),])
+length(bacttaxaspme)
+
+tempme<-datBacr3fotu%>%
+  select(one_of(bacttaxaspme))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+bacttaxasphi<-rownames(bactabun5[which(bactabun5$group=="hi"),])
+length(bacttaxasphi)
+
+temphi<-datBacr3fotu%>%
+  select(one_of(bacttaxasphi))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+temp<-rbind(templo,tempme,temphi)
+temp$lomehi<-factor(c("lo",'me','hi'),levels=c("lo",'me','hi'))
+
+ggplot(temp,aes(x=lomehi,y=mean))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean+se, ymin=mean-se),width=.15,size=.5)
+
+
+
+
+
+
+#what I could do
+#take out singletons/rare species
+#mess with the 75% limit - down to 60
+
+#take out all doubletons and singletons, and taxa with a summed rel abun <.2% (same filter as for what is going into the networks) - this means use: 
+datBacr3fotu3
+datEukN5fotu3
+datEukS4fotu3
+datITS3fotu3
+
+#investigating how abundance and frequency plays out across the data set - most species are rare, common species are found in all lo me and hi
+bactabun1<-cbind(lomehi=datBacr3fotu3$lomehi,datBacr3fotu3[,-c(1:31)])
+bactabun1<-cbind(lomehi=datEukN5fotu3$lomehi,datEukN5fotu3[,-c(1:31)])
+bactabun1<-cbind(lomehi=datEukS4fotu3$lomehi,datEukS4fotu3[,-c(1:31)])
+bactabun1<-cbind(lomehi=datITS3fotu3$lomehi,datITS3fotu3[,-c(1:31)])
+bactabun1[1:10,1:10]
+bactabun2<-aggregate.data.frame(bactabun1[,2:dim(bactabun1)[2]],by=list(bactabun1$lomehi),sum)
+dim(bactabun2)
+bactabun2[,1:10]
+bactabun3<-t(bactabun2[,-c(1)])
+bactabun3[1:10,];colnames(bactabun3)<-c("hi","lo","me")
+bactabun3[1:10,]
+bactabun4<-as.data.frame(bactabun3)
+#scatterplot3d(log(bactabun4$lo+.1),log(bactabun4$me+.1),log(bactabun4$hi+.1),type="h")
+head(bactabun4)
+
+bactfreq1<-data.frame(lomehi=as.character(datBacr3fotu3$lomehi),ifelse(datBacr3fotu3[,-c(1:31)]>0,1,0))
+bactfreq1<-data.frame(lomehi=as.character(datEukN5fotu3$lomehi),ifelse(datEukN5fotu3[,-c(1:31)]>0,1,0))
+bactfreq1<-data.frame(lomehi=as.character(datEukS4fotu3$lomehi),ifelse(datEukS4fotu3[,-c(1:31)]>0,1,0))
+bactfreq1<-data.frame(lomehi=as.character(datITS3fotu3$lomehi),ifelse(datITS3fotu3[,-c(1:31)]>0,1,0))
+bactfreq1[1:10,1:10]
+bactfreq2<-aggregate.data.frame(bactfreq1[,2:dim(bactabun1)[2]],by=list(bactfreq1$lomehi),sum)
+dim(bactfreq2)
+bactfreq2[,1:10]
+bactfreq3<-t(bactfreq2[,-c(1)])
+bactfreq3[1:10,];colnames(bactfreq3)<-c("hi","lo","me")
+bactfreq3[1:10,]
+bactfreq4<-as.data.frame(bactfreq3)
+#scatterplot3d(log(bactfreq4$lo+1),log(bactfreq4$me+1),log(bactfreq4$hi+1),type="h")
+head(bactfreq4)
+ind<-which(rowSums(bactfreq4)>9)
+length(ind)
+bactfreq4[ind,]
+
+#making the plot from barbaran et al, abun vs. freq
+plot(rowSums(bactfreq4),rowSums(bactabun4),log="y")
+plot(rowSums(bactfreq4),rowSums(bactabun4))
+
+
+
+#specialist = at least 60% of the abundance of a taxon is in one plant density bracket
+#generalist = in all plots and not as above
+
+bactabun5<-bactabun4
+bactabun5$hip<-bactabun4$hi/rowSums(bactabun4)
+bactabun5$lop<-bactabun4$lo/rowSums(bactabun4)
+bactabun5$mep<-bactabun4$me/rowSums(bactabun4)
+head(bactabun5)
+
+#for frequency
+bactabun5<-bactfreq4
+bactabun5$hip<-bactfreq4$hi/rowSums(bactfreq4)
+bactabun5$lop<-bactfreq4$lo/rowSums(bactfreq4)
+bactabun5$mep<-bactfreq4$me/rowSums(bactfreq4)
+head(bactabun5)
+
+bactabun5$group<-NA
+ind<-which(bactabun5$hip>.70)
+bactabun5$group[ind]<-'hi'
+ind<-which(bactabun5$lop>.70)
+bactabun5$group[ind]<-'lo'
+ind<-which(bactabun5$mep>.70)
+bactabun5$group[ind]<-'me'
+
+bactabun5$class<-NA
+ind<-which(rowSums(bactabun5[,1:3]>0)==3)
+bactabun5$class[ind]<-"gen"
+ind<-which(bactabun5$group%in%c("lo","me","hi"))
+bactabun5$class[ind]<-"spe"
+#bactabun5[which(rowSums(bactabun5[,1:3]>0)==3),] #just a check that there are specialists that are present in all three groups
+
+bactgen<-rownames(bactabun5[which(bactabun5$class=="gen"),])
+
+tempdata<-datBacr3fotu3
+tempdata<-datEukN5fotu3 
+tempdata<-datEukS4fotu3 
+tempdata<-datITS3fotu3 
+
+temp<-tempdata%>%
+  select(one_of(c("lomehi",bactgen)))%>%
+  mutate(sum=rowSums(.[2:length(bactgen)+1]))%>%
+  group_by(lomehi)%>%
+  summarise(mean=mean(sum),se=std.error(sum))%>%
+  mutate(lomehi=factor(lomehi,levels=c("lo","me","hi")))
+
+ggplot(temp,aes(x=lomehi,y=mean))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean+se, ymin=mean-se),width=.15,size=.5)
+
+#specialists
+bacttaxasplo<-rownames(bactabun5[which(bactabun5$group=="lo"),])
+length(bacttaxasplo)
+
+templo<-tempdata%>%
+  select(one_of(bacttaxasplo))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+bacttaxaspme<-rownames(bactabun5[which(bactabun5$group=="me"),])
+length(bacttaxaspme)
+
+tempme<-tempdata%>%
+  select(one_of(bacttaxaspme))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+bacttaxasphi<-rownames(bactabun5[which(bactabun5$group=="hi"),])
+length(bacttaxasphi)
+
+temphi<-tempdata%>%
+  select(one_of(bacttaxasphi))%>%
+  mutate(sum=rowSums(.))%>%
+  select(sum)%>%
+  summarise(mean=mean(sum),se=std.error(sum))
+
+temp<-rbind(templo,tempme,temphi)
+temp$lomehi<-factor(c("lo",'me','hi'),levels=c("lo",'me','hi'))
+
+ggplot(temp,aes(x=lomehi,y=mean))+
+  labs(x = "",y="Relative abundance")+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean+se, ymin=mean-se),width=.15,size=.5)
+
+
+
+#####
+plotdata<-relALL %>%
+  mutate(typeTaxa=paste(type,Taxa)) %>%
+  group_by(typeTaxa,Taxa,lomehi,type) %>%
+  summarise(mean_abun = mean(abun),se_abun=std.error(abun)) 
+plotdata$Taxa<-factor(plotdata$Taxa,levels=unique(plotdata$Taxa))
+
+as.data.frame(plotdata)
+plotdata$lomehi<-factor(plotdata$lomehi,levels=c("lo","me","hi"))
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/relabuntaxavsplantdensitygroupsBFSLEN.pdf",width=6.5,height=6)#,width=4.3, height=5.3
+ggplot(plotdata,aes(x=lomehi,y=mean_abun,group=typeTaxa,color=Taxa))+
+  labs(x = "",y="Relative abundance")+
+  theme_classic()+
+  theme(line=element_line(size=.3),text=element_text(size=10),strip.background = element_rect(colour="white", fill="white"),axis.line=element_line(color="gray30",size=.3),legend.key.size = unit(.6, "line"))+
+  geom_line(stat = "identity", position = "identity",size=.5)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax = mean_abun+se_abun, ymin=mean_abun-se_abun),width=.15,size=.5)+
+  scale_color_manual(values=mycols) +
+  facet_wrap(~type,nrow=3,scales="free")+
+  guides(col = guide_legend(ncol = 1))
+dev.off()
+
+

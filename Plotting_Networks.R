@@ -127,8 +127,9 @@ shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
 plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
 dev.off()
-#colored by module
 
+
+#colored by module - for ESA
 colorgraph3b<-membership(cluster_edge_betweenness(graphlo))
 colorgraph3c<-data.frame(num=1:54,color=c("#5e91eb",
 "#73ba2d",
@@ -194,6 +195,15 @@ sizesgraph3<-ifelse(verticesgraph3$otu%in%hubslo|verticesgraph3$otu%in%connector
 shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
 plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3)#vertex.size=log(sizesgraph3$abun)*2
 
+#colored by module but not sized by hubs, saving l allows you to remember the configuration
+l3<-layout_with_fr(graph3)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6module.pdf")
+plot(graph3,vertex.size=4,vertex.color=colorgraph3f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l3)#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sameconfig.pdf")
+plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l3)#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
 
 
 
@@ -223,6 +233,80 @@ plot(graph2,vertex.size=sizesgraph2,vertex.color=colorgraph2$color,vertex.label.
 dev.off()
 
 
+#colored by module but not sized by hubs, saving l allows you to remember the configuration
+colorgraph2b<-membership(cluster_edge_betweenness(graphme))
+colorgraph2c<-data.frame(num=1:46,color=c("#5e91eb",
+                                          "#73ba2d",
+                                          "#9040b0",
+                                          "#3dac31",
+                                          "#d452bb",
+                                          "#3fd070",
+                                          "#b374e7",
+                                 #         "#b2c634",
+                                          "#5864d5",
+                                          "#d1b524",
+                                          "#5567ba",
+                                         "#8555a3",
+                                          "#6fc65f",
+                                 #         "#c3428c",
+                                          "#3b9434",
+                                          "#db346f",
+                                          "#48ae6a",
+                                  #        "#c93844",
+                                          "#64c99c",
+                                          "#e65634",
+                                #          "#43c1c2",
+                                          "#b6431f",
+                                          "#53a2d5",
+                                          "#db7e2d",
+                                          "#5569a5",
+                                #          "#89be4e",
+                                          "#d986cc",
+                                          "#60912b",
+                                          "#aa99df",
+                                          "#91a824",
+                                #          "#d0b847",
+                                          "#995584",
+                                          "#357429",
+                                          "#e36883",
+                                          "#3a9674",
+                                          "#a0485e",
+                                          "#b5bb58",
+                                          "#e08eaa",
+                                #          "#276e4a",
+                                          "#e7836b",
+                                          "#659258",
+                                          "#ab5446",
+                                          "#94b86c",
+                                          "#9d5723",
+                                 #         "#c7bc7b",
+                                          "#52621d",
+                                          "#dfa03a",
+                                          "#78733a",
+                                          "#e1a473",
+                                          "#7a8428",
+                                          "#ad7b46",
+                                          "#aa952d",
+                                          "#80621b",
+                                          "#a69a55"))
+colorgraph2c$color<-as.character(colorgraph2c$color)
+colorgraph2d<-data.frame(num=print(colorgraph2b))
+colorgraph2d$order<-1:nrow(colorgraph2d)
+colorgraph2e<-merge(colorgraph2d,colorgraph2c,"num")
+colorgraph2f<-colorgraph2e[order(colorgraph2e$order),]
+
+l2<-layout_with_fr(graph2)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6module.pdf")
+plot(graph2,vertex.size=4,vertex.color=colorgraph2f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l2)#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sameconfig.pdf")
+plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l2)#vertex.size=log(sizesgraph2$abun)*2 #dev.off()
+dev.off()
+
+
+
+
 #High density
 inputhi<-subset(edge_listsBEP,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
 dim(inputhi)
@@ -249,6 +333,124 @@ shapesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,"csquare",'circle')
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
 plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph1)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
 dev.off()
+
+
+#colored by module but not sized by hubs, saving l allows you to remember the configuration
+colorgraph1b<-membership(cluster_edge_betweenness(graphhi))
+colorgraph1c<-data.frame(num=1:99,color=c("#5e91eb",
+                                          "#73ba2d",
+                                          "#9040b0",
+                                          "#3dac31",
+                                          "#d452bb",
+                                          "#3fd070",
+                                          "#b374e7",
+                                          "#b2c634",
+                                          "#5864d5",
+                                          "#d1b524",
+                                          "#5567ba",
+                                          "#8555a3",
+                                          "#6fc65f",
+                                          "#c3428c",
+                                          "#3b9434",
+                                          "#db346f",
+                                          "#48ae6a",
+                                          "#c93844",
+                                          "#64c99c",
+                                          "#e65634",
+                                          "#43c1c2",
+                                          "#b6431f",
+                                          "#53a2d5",
+                                          "#db7e2d",
+                                          "#5569a5",
+                                          "#89be4e",
+                                          "#d986cc",
+                                          "#60912b",
+                                          "#aa99df",
+                                          "#91a824",
+                                          "#d0b847",
+                                          "#995584",
+                                          "#357429",
+                                          "#e36883",
+                                          "#3a9674",
+                                          "#a0485e",
+                                          "#b5bb58",
+                                          "#e08eaa",
+                                          "#276e4a",
+                                          "#e7836b",
+                                          "#659258",
+                                          "#ab5446",
+                                          "#94b86c",
+                                          "#9d5723",
+                                          "#c7bc7b",
+                                          "#52621d",
+                                          "#dfa03a",
+                                          "#78733a",
+                                          "#e1a473",
+                                          "#7a8428",
+                                          "#ad7b46",
+                                          "#aa952d",
+                                          "#80621b",
+                                          "#a69a55",
+                                          
+                                          "#5e91eb",
+                                          "#73ba2d",
+                                          "#9040b0",
+                                          "#3dac31",
+                                          "#d452bb",
+                                          "#3fd070",
+                                          "#b374e7",
+                                          "#b2c634",
+                                          "#5864d5",
+                                          "#d1b524",
+                                          "#5567ba",
+                                          "#8555a3",
+                                          "#6fc65f",
+                                          "#c3428c",
+                                          "#3b9434",
+                                          "#db346f",
+                                          "#48ae6a",
+                                          "#c93844",
+                                          "#64c99c",
+                                          "#e65634",
+                                          "#43c1c2",
+                                          "#b6431f",
+                                          "#53a2d5",
+                                          "#db7e2d",
+                                          "#5569a5",
+                                          "#89be4e",
+                                          "#d986cc",
+                                          "#60912b",
+                                          "#aa99df",
+                                          "#91a824",
+                                          "#d0b847",
+                                          "#995584",
+                                          "#357429",
+                                          "#e36883",
+                                          "#3a9674",
+                                          "#a0485e",
+                                          "#b5bb58",
+                                          "#e08eaa",
+                                          "#276e4a",
+                                          "#e7836b",
+                                          "#659258",
+                                          "#ab5446",
+                                          "#94b86c",
+                                          "#9d5723",
+                                          "#c7bc7b"))
+colorgraph1c$color<-as.character(colorgraph1c$color)
+colorgraph1d<-data.frame(num=print(colorgraph1b))
+colorgraph1d$order<-1:nrow(colorgraph1d)
+colorgraph1e<-merge(colorgraph1d,colorgraph1c,"num")
+colorgraph1f<-colorgraph1e[order(colorgraph1e$order),]
+
+l1<-layout_with_fr(graph1)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6module.pdf")
+plot(graph1,vertex.size=4,vertex.color=colorgraph1f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l1)#vertex.size=log(sizesgraph3$abun)*2
+dev.off()
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sameconfig.pdf")
+plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l1)#,vertex.size=log(sizesgraph1$abun)*2  vertex.label=as.character(colorgraph1$
+dev.off()
+
 
 
 #colored by module

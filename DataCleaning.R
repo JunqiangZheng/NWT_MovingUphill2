@@ -262,6 +262,8 @@ datITS2f <- subset_samples(datITS2,Sample_name!=81&Sample_name!=61&Sample_name!=
 datITS3f <- subset_samples(datITS3,Sample_name!=81&Sample_name!=61&Sample_name!=33&Sample_name!=56&Sample_name!=78&Sample_name!=126&Sample_name!=5&Sample_name!=34)
 
 
+###I should have taken out taxa that are now zero across all samples due to deleting above the one sample that has the taxon. filter_taxa(datITS3f, function(x) sum(x) > (0), prune=T)
+
 
 #make otu tables (bact takes 10 min)
 datBacr3fotu<-cbind(sample_data(datBac3f),t(otu_table(datBac3f)))
