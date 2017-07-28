@@ -95,6 +95,27 @@ plot(c(1,1),c(1,1))
 legend("topright",c("Heterotrophic bacteria","Photosynthetic bacteria","Heterotrophic eukaryota","Photosynthetic eukaryota","Metazoa","Fungi","Plants","Bacterial feeder","Fungal feeder","Omnivore","Plant parasite","Root associate"),pt.bg=c("#7879BC","#94BA3C","#673482","#466D24","#ff9c34","#F6EC32","#E95275","black","gray30","gray55","gray80","white"),bty="n",pch=21,cex=1.4)
 dev.off()
 
+labelsall2<-merge(labelsall,bactgenspec,"otu",all.x=T,all.y=T,sort=T)
+head(labelsall2)
+colorgenspec<-data.frame(rbind(c("gen","blue"), #"blue"
+                               c("splo","yellow"), #"pink"
+                               c("spme","red"), #red
+                               c("sphi","black"))) #brickred
+colnames(colorgenspec)<-c("genspec","colorgenspec")
+labelsall3<-merge(labelsall2,colorgenspec,"genspec",all.x=T,all.y=T,sort=T)
+labelsall3$colorgenspec<-as.character(labelsall3$colorgenspec)
+head(labelsall3)
+tail(labelsall3)
+labelsall3$colorgenspec[which(is.na(labelsall3$colorgenspec))]<-"gray70" #this makes anything that is not a gen or spec (which are a few microbes and all plants) gray, they will have NA for the "genspec" column
+
+#labelsall2$colorgenspec<-ifelse(labelsall2$genspec=="gen","blue",ifelse(labelsall2$genspec=="splo","lightred",ifelse(labelsall2$genspec=="spme","mediumred",ifelse(labelsall2$genspec=="sphi","red","gray"))))
+
+
+
+
+
+
+
 
 
 
@@ -102,7 +123,7 @@ dev.off()
 ###### Plotting ######
 
 #All Bac, ITS, Euk small, Euk metazoa 
-#Low density
+#######  Low density ######
 inputlo<-subset(edge_listsBEP,qval<.01&spearmanrho>.6&trt=="lo")[,3:4]
 dim(inputlo)
 #inputlov<-subset(edge_listsKS32no2b,qval<.05&trt=="lo")
@@ -206,8 +227,40 @@ plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,ver
 dev.off()
 
 
+#colored by gen/spec
+colorgraph3<-merge(verticesgraph3,labelsall3,"otu",all.y=F,all.x=F,sort=F)
+plot(graph3,vertex.size=4,vertex.color=colorgraph3$colorgenspec,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l3)#vertex.size=log(sizesgra
 
-#Medium density
+which(is.na(colorgraph3$genspec)==T)
+colorgraph3[430,]
+
+#percent of specialists:  I should probably tweak this so plants are not included
+length(which(colorgraph3$genspec=="splo"))
+length(colorgraph3$genspec)
+20/621
+
+length(which(colorgraph2$genspec=="spme"))
+length(colorgraph2$genspec)
+1/615
+
+length(which(colorgraph1$genspec=="sphi"))
+length(colorgraph1$genspec)
+78/716
+
+##overall in input dataset: bactgenspec
+length(which(bactgenspec$genspec=="splo"))
+length(which(bactgenspec$genspec=="spme"))
+length(which(bactgenspec$genspec=="sphi"))
+#total for microbes going into networks are: 3772+1125+1498+233
+(280+137+790)/(3772+1125+1498+233)
+280/(3772+1125+1498+233)
+137/(3772+1125+1498+233)
+790/(3772+1125+1498+233)
+
+
+
+
+##### Medium density ######
 inputme<-subset(edge_listsBEP,qval<.01&spearmanrho>.6&trt=="me")[,3:4]
 dim(inputme)
 #inputmev<-subset(edge_listsKS32no2b,qval<.05&trt=="me")
@@ -301,13 +354,18 @@ plot(graph2,vertex.size=4,vertex.color=colorgraph2f$color,vertex.label.cex=.8,ve
 dev.off()
 
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sameconfig.pdf")
+labelsall3
 plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l2)#vertex.size=log(sizesgraph2$abun)*2 #dev.off()
 dev.off()
 
+#colored by gen/spec
+colorgraph2<-merge(verticesgraph2,labelsall3,"otu",all.y=F,all.x=F,sort=F)
+plot(graph2,vertex.size=4,vertex.color=colorgraph2$colorgenspec,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l2)#vertex.size=log(sizesgra
 
 
 
-#High density
+
+#####  High density #####
 inputhi<-subset(edge_listsBEP,qval<.01&spearmanrho>.6&trt=="hi")[,3:4]
 dim(inputhi)
 #inputhiv<-subset(edge_listsKS32no2b,qval<.05&trt=="hi")#
@@ -465,6 +523,12 @@ plot(graph1,vertex.size=4,vertex.color=membership(eb),edge.curved=T,vertex.label
 eb<-walktrap.community(graph1)
 membership(eb)
 plot(graph1,vertex.size=4,vertex.color=membership(eb),edge.curved=T,vertex.label=NA)
+
+
+#colored by gen/spec
+colorgraph1<-merge(verticesgraph1,labelsall3,"otu",all.y=F,all.x=F,sort=F)
+plot(graph1,vertex.size=4,vertex.color=colorgraph1$colorgenspec,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l1)#vertex.size=log(sizesgra
+
 
 
 ##if i want to only plot vertices with >1 edge

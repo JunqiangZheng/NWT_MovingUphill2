@@ -488,7 +488,7 @@ plot(rowSums(bactfreq4),rowSums(bactabun4))
 
 
 
-#specialist = at least 60% of the abundance of a taxon is in one plant density bracket
+#specialist = at least 70% of the abundance of a taxon is in one plant density bracket
 #generalist = in all plots and not as above
 
 bactabun5<-bactabun4
@@ -625,7 +625,7 @@ plot(rowSums(bactfreq4),rowSums(bactabun4))
 
 
 
-#specialist = at least 60% of the abundance of a taxon is in one plant density bracket
+#specialist = at least 70% of the frequency of a taxon is in one plant density bracket
 #generalist = in all plots and not as above
 #this is probably messed up b/c I'm averaging abundances of low specialistis is all plots (lo me and hi)
 
@@ -747,4 +747,13 @@ ggplot(temp,aes(x=lomehi,y=mean,group=Group,col=Group))+
   guides(col = guide_legend(ncol = 1))
 dev.off()
 
+##make dataframe of gen/specialists for labels for network figs
+bacttaxasplo
+bacttaxaspme
+bacttaxasphi
+bactgen
+
+bactgenspec<-data.frame(rbind(cbind(bacttaxasplo,rep("splo",length(bacttaxasplo))),cbind(bacttaxaspme,rep("spme",length(bacttaxaspme))),cbind(bacttaxasphi,rep("sphi",length(bacttaxasphi))),cbind(bactgen,rep("gen",length(bactgen)))))
+head(bactgenspec)
+colnames(bactgenspec)<-c("otu","genspec")
 

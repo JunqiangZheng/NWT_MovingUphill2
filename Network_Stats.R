@@ -411,13 +411,15 @@ phibac4[order(phibac4$pi,decreasing=T),]
 
 
 
-# Number of plants bacteria and euks in networks
+# Number of plants bacteria and euks in networks and photosynthetic/nonphotosynthetic members 
 verticesgraphlo<-as.data.frame(rownames(as.matrix(V(graphlo))))
 verticesgraphlo2<-labelsall[which(labelsall$otu%in%verticesgraphlo[,1]),]
 length(which(verticesgraphlo2$group=="NonphotosyntheticBacteria"|verticesgraphlo2$group=="PhotosyntheticBacteria"))
 length(which(verticesgraphlo2$group=="Fungi"))
 length(which(verticesgraphlo2$group=="PhotosyntheticEukaryota"|verticesgraphlo2$group=="NonphotosyntheticEukaryota"))
 length(which(verticesgraphlo2$group=="Plant"))
+length(which(verticesgraphlo2$group=="PhotosyntheticEukaryota"|verticesgraphlo2$group=="PhotosyntheticBacteria")) #27.8% are photosynthetic
+length(which(verticesgraphlo2$group=="NonphotosyntheticBacteria"|verticesgraphlo2$group=="NonphotosyntheticEukaryota"|verticesgraphlo2$group=="Fungi")) 
 
 verticesgraphme<-as.data.frame(rownames(as.matrix(V(graphme))))
 verticesgraphme2<-labelsall[which(labelsall$otu%in%verticesgraphme[,1]),]
@@ -425,6 +427,8 @@ length(which(verticesgraphme2$group=="NonphotosyntheticBacteria"|verticesgraphme
 length(which(verticesgraphme2$group=="Fungi"))
 length(which(verticesgraphme2$group=="PhotosyntheticEukaryota"|verticesgraphme2$group=="NonphotosyntheticEukaryota"))
 length(which(verticesgraphme2$group=="Plant"))
+length(which(verticesgraphme2$group=="PhotosyntheticEukaryota"|verticesgraphme2$group=="PhotosyntheticBacteria"|verticesgraphme2$group=="Plant")) #30.6% are photosynthetic
+length(which(verticesgraphme2$group=="NonphotosyntheticBacteria"|verticesgraphme2$group=="NonphotosyntheticEukaryota"|verticesgraphme2$group=="Fungi"))
 
 verticesgraphhi<-as.data.frame(rownames(as.matrix(V(graphhi))))
 verticesgraphhi2<-labelsall[which(labelsall$otu%in%verticesgraphhi[,1]),]
@@ -433,6 +437,23 @@ length(which(verticesgraphhi2$group=="Fungi"))
 length(which(verticesgraphhi2$group=="PhotosyntheticEukaryota"|verticesgraphhi2$group=="NonphotosyntheticEukaryota"))
 length(which(verticesgraphhi2$group=="Plant"))
 length(which(verticesgraphhi2$group=="Metazoa"))
+length(which(verticesgraphhi2$group=="PhotosyntheticEukaryota"|verticesgraphhi2$group=="PhotosyntheticBacteria"|verticesgraphhi2$group=="Plant")) #21.4 are photosynthetic
+length(which(verticesgraphhi2$group=="NonphotosyntheticBacteria"|verticesgraphhi2$group=="NonphotosyntheticEukaryota"|verticesgraphhi2$group=="Fungi"|verticesgraphhi2$group=="Metazoa"))
+
+
+#to get proportion of photosynthetic taxa in the input dataset, I would need to get a list of otu names and then merge that list with the labelfile- bactabun4 has all the microbes that went into the network (and gen/spec analysis which is the same cutoff)
+pnonp<-data.frame(otu=rownames(bactabun4))
+pnonp2<-merge(pnonp,labelsall,all.x=F,all.y=F,sort=F)
+length(which(pnonp2$group%in%c("PhotosyntheticBacteria","PhotosyntheticEukaryota","Plant")))
+length(which(pnonp2$group%in%c("Fungi","Metazoa","NonphotosyntheticBacteria","NonphotosyntheticEukaryota")))#,"unknown"
+1008/(1008+5611)
+
+#this is on the whole data set, not the input datafile
+length(which(labelsall$group%in%c("PhotosyntheticBacteria","PhotosyntheticEukaryota","Plant")))
+length(which(labelsall$group%in%c("Fungi","Metazoa","NonphotosyntheticBacteria","NonphotosyntheticEukaryota")))#,"unknown"
+4520/(4520+30586)
+
+
 
 #number of bacteria, fungi, euks in networks as percentage of input
 #bacteria
