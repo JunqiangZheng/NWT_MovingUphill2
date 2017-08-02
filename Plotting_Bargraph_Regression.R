@@ -757,3 +757,49 @@ bactgenspec<-data.frame(rbind(cbind(bacttaxasplo,rep("splo",length(bacttaxasplo)
 head(bactgenspec)
 colnames(bactgenspec)<-c("otu","genspec")
 
+
+
+##### beta diversity #####
+#bactabun1 has all taxa filtered as in the network input
+
+bactabun1lo<-subset(bactabun1,lomehi=="lo");bactabun1lo<-bactabun1lo[,-1]
+bactabun1me<-subset(bactabun1,lomehi=="me");bactabun1me<-bactabun1me[,-1]
+bactabun1hi<-subset(bactabun1,lomehi=="hi");bactabun1hi<-bactabun1hi[,-1]
+
+mean(vegdist(bactabun1lo, method = "bray"))
+mean(vegdist(bactabun1me, method = "bray"))
+mean(vegdist(bactabun1hi, method = "bray"))
+#it does go down very slightly at high plant density
+
+bactabun1all<-bactabun1[,-1]
+bactabun1lomehi<-bactabun1[,1]
+bactabun1lomehicol<-as.character(bactabun1lomehi)
+bactabun1lomehicol[which(bactabun1lomehicol=="lo")]<-"#ab3b57" #pink
+bactabun1lomehicol[which(bactabun1lomehicol=="me")]<-"#5268cb" #blue
+bactabun1lomehicol[which(bactabun1lomehicol=="hi")]<-"#639e51" #green
+mynmds<-metaMDS(bactabun1all,dist="bray",trymax = 1000)
+plot(scores(mynmds),col=bactabun1lomehicol,pch=21,bg=bactabun1lomehicol)#-scores(mynmds)[,1],scores(mynmds)[,2]
+ordiellipse(mynmds,bactabun1lomehi,col=c("#639e51","#ab3b57","#5268cb"),conf=.99999,kind="se",lwd=2)#
+legend("bottomright",c("Early","Mid","Late"),col=c("#ab3b57","#5268cb","#639e51"),pch=21,pt.bg=c("#ab3b57","#5268cb","#639e51"),lty=1,bty="n")
+
+#trying to rotate axis so it is in order of loe me hi on the ordination
+bactabun1lomehinum<-as.character(bactabun1lomehi)
+bactabun1lomehinum[which(bactabun1lomehinum=="lo")]<-1
+bactabun1lomehinum[which(bactabun1lomehinum=="me")]<-2
+bactabun1lomehinum[which(bactabun1lomehinum=="hi")]<-3
+mynmdsaxis1<--scores(mynmds)[,1]
+mynmdsrot<-MDSrotate(mynmds,bactabun1lomehinum) # I like this better than below when the fig window is square
+#mynmdsrot<-MDSrotate(mynmds,mynmdsaxis1)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/nmdslomehi.pdf")
+plot(scores(mynmdsrot),col=bactabun1lomehicol,pch=21,bg=bactabun1lomehicol,cex=1.5)#
+ordiellipse(mynmdsrot,bactabun1lomehi,col=c("#639e51","#ab3b57","#5268cb"),conf=.99999,kind="se",lwd=3)#
+legend("bottomright",c("Early","Mid","Late"),col=c("#ab3b57","#5268cb","#639e51"),pch=21,pt.bg=c("#ab3b57","#5268cb","#639e51"),lty=1,bty="n",cex=1.5)
+dev.off()
+
+bactabun1dist<-vegdist(bactabun1all, method = "bray")
+betadisper(bactabun1dist,bactabun1lomehi)#, bias.adjust=TRUE
+#not a huge difference, .49 for high and me, .52 for low
+TukeyHSD(betadisper(bactabun1dist,bactabun1lomehi))
+#nearly significant differences between lo and hi, me and lo
+permutest(betadisper(bactabun1dist,bactabun1lomehi),permutations=9999)
+#nearly significant overall group effect .051

@@ -411,7 +411,7 @@ phibac4[order(phibac4$pi,decreasing=T),]
 
 
 
-# Number of plants bacteria and euks in networks and photosynthetic/nonphotosynthetic members 
+###### Number of plants bacteria and euks in networks and photosynthetic/nonphotosynthetic members  #####
 verticesgraphlo<-as.data.frame(rownames(as.matrix(V(graphlo))))
 verticesgraphlo2<-labelsall[which(labelsall$otu%in%verticesgraphlo[,1]),]
 length(which(verticesgraphlo2$group=="NonphotosyntheticBacteria"|verticesgraphlo2$group=="PhotosyntheticBacteria"))
@@ -447,6 +447,7 @@ pnonp2<-merge(pnonp,labelsall,all.x=F,all.y=F,sort=F)
 length(which(pnonp2$group%in%c("PhotosyntheticBacteria","PhotosyntheticEukaryota","Plant")))
 length(which(pnonp2$group%in%c("Fungi","Metazoa","NonphotosyntheticBacteria","NonphotosyntheticEukaryota")))#,"unknown"
 1008/(1008+5611)
+#Then I guess I would have to take a random sample of 600 (or mean of taxa in 3 networks), calculate percent photosynthetic, do this 1000 times to get 95% CI, then see if those differences are significant
 
 #this is on the whole data set, not the input datafile
 length(which(labelsall$group%in%c("PhotosyntheticBacteria","PhotosyntheticEukaryota","Plant")))
