@@ -1,4 +1,5 @@
 #Loading/saving/packages needed
+#This was originally done on R 3.3.1 "Bug in your hair"
 
 setwd("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/NWT_MovingUphill2")
 setwd("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata")
