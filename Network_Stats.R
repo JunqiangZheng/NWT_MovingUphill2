@@ -198,7 +198,7 @@ zipioutputlo[order(zipioutputlo$pi,decreasing=T),]
 
 
 
-#Functionalizing zi and pi calculations
+######  Functionalizing zi and pi calculations ######
 #assuming the same modules as calculated above in "modularity"
 
 zipi<-function(inputfile,graphfile){
@@ -404,9 +404,66 @@ phibac4[order(phibac4$pi,decreasing=T),]
 
 
 
+###### abundance of hub/connector species ######
+#bactabun1b from the Plotting_Bargraph_Regression.R file has all species relative abundances (bact,its,18S). made up of the below dataframes:
+datBacr3fotu3[1:10,30:40]
+datEukN5fotu3
+datEukS4fotu3
+datITS3fotu3[1:10,30:40]
 
+hubslo
+hubsme
+hubshi
 
+zipioutputlo
+zipioutputme
+zipioutputhi
 
+#mean relative abundances of all bacteria in dataset entering network analysis
+relabunlomehib<-aggregate.data.frame(datBacr3fotu3[,32:3803],by=list(datBacr3fotu3$lomehi),mean)
+rownames(relabunlomehib)<-relabunlomehib$Group.1
+relabunlomehib<-relabunlomehib[,-1]
+relabunlomehib<-relabunlomehib*100
+relabunlomehib[,1:40]
+relabunlomehibt<-t(relabunlomehib)
+relabunlomehibt[1:40,]
+relabunlomehibt2<-data.frame(otu=rownames(relabunlomehibt),relabunlomehibt)
+head(relabunlomehibt2)
+
+zipioutputlorelabun<-merge(zipioutputlo,relabunlomehibt2) #this only selects the bacteria (the intersection of otu in both data sets)
+head(zipioutputlorelabun)
+zipioutputmerelabun<-merge(zipioutputme,relabunlomehibt2) #this only selects the bacteria (the intersection of otu in both data sets)
+head(zipioutputlorelabun)
+zipioutputhirelabun<-merge(zipioutputhi,relabunlomehibt2) #this only selects the bacteria (the intersection of otu in both data sets)
+head(zipioutputlorelabun)
+
+plot(zipioutputlorelabun$lo,zipioutputlorelabun$zi,pch=1,bg=1)
+points(zipioutputmerelabun$me,zipioutputmerelabun$zi,pch=1,bg=1)
+points(zipioutputhirelabun$hi,zipioutputhirelabun$zi,pch=1,bg=1)
+abline(h=2.5)
+
+#organizing dataframe for ggplot
+zipioutputlorelabun2<-zipioutputlorelabun[,-c(6,8)];colnames(zipioutputlorelabun2)[6]<-"relabun"
+zipioutputmerelabun2<-zipioutputmerelabun[,-c(6,7)];colnames(zipioutputmerelabun2)[6]<-"relabun"
+zipioutputhirelabun2<-zipioutputhirelabun[,-c(7,8)];colnames(zipioutputhirelabun2)[6]<-"relabun"
+
+zipioutputallrelabun2<-rbind(zipioutputlorelabun2,zipioutputmerelabun2,zipioutputhirelabun2)
+zipioutputallrelabun2$density<-factor(zipioutputallrelabun2$density,levels=c("Low",'Medium','High'))
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipirelabun.pdf",width=7, height=4.7) #for two panels width=7, height=3.5)
+ggplot(zipioutputallrelabun2,aes(x=relabun,y=zi,color=density))+# as.numeric(fert),color=species
+  labs(x="Relative abundance (%)",y="Within-module connectivity (Zi)")+
+  theme_classic()+
+  #scale_colour_grey()+
+  scale_color_manual(values=c(gray(.7), gray(.5),gray(.3)))+
+  theme(line=element_line(size=.3),text=element_text(size=12),strip.background = element_rect(colour="white", fill="white"),axis.line=element_line(color="gray30",size=.5))+
+  #xlim(0,1)+
+  #ylim(-2,6)+
+  geom_point(size=1.4)+
+  geom_hline(yintercept=2.5)
+  #geom_vline(xintercept=.62)
+  #facet_wrap(~type,scales="free")
+dev.off()
 
 
 

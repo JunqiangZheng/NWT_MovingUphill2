@@ -803,3 +803,9 @@ TukeyHSD(betadisper(bactabun1dist,bactabun1lomehi))
 #nearly significant differences between lo and hi, me and lo
 permutest(betadisper(bactabun1dist,bactabun1lomehi),permutations=9999)
 #nearly significant overall group effect .051
+
+
+
+
+
+
