@@ -404,7 +404,12 @@ phibac4[order(phibac4$pi,decreasing=T),]
 
 
 
-###### abundance of hub/connector species ######
+
+
+
+
+
+###### Abundance of hub/connector species ######
 #bactabun1b from the Plotting_Bargraph_Regression.R file has all species relative abundances (bact,its,18S). made up of the below dataframes:
 datBacr3fotu3[1:10,30:40]
 datEukN5fotu3
@@ -449,9 +454,13 @@ zipioutputhirelabun2<-zipioutputhirelabun[,-c(7,8)];colnames(zipioutputhirelabun
 
 zipioutputallrelabun2<-rbind(zipioutputlorelabun2,zipioutputmerelabun2,zipioutputhirelabun2)
 zipioutputallrelabun2$density<-factor(zipioutputallrelabun2$density,levels=c("Low",'Medium','High'))
+zipioutputallrelabun3 <- zipioutputallrelabun2 %>%
+  gather(zipi,value,zi:pi)
+zipioutputallrelabun3$zipi<-factor(zipioutputallrelabun3$zipi,levels=c("zi","pi"))
+zipilines<-data.frame(zipi = c("zi", "pi"), Z = c(2.5, .62))
 
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipirelabun.pdf",width=7, height=4.7) #for two panels width=7, height=3.5)
-ggplot(zipioutputallrelabun2,aes(x=relabun,y=zi,color=density))+# as.numeric(fert),color=species
+ggplot(zipioutputallrelabun3,aes(x=relabun,y=value,color=density))+# as.numeric(fert),color=species
   labs(x="Relative abundance (%)",y="Within-module connectivity (Zi)")+
   theme_classic()+
   #scale_colour_grey()+
@@ -460,10 +469,69 @@ ggplot(zipioutputallrelabun2,aes(x=relabun,y=zi,color=density))+# as.numeric(fer
   #xlim(0,1)+
   #ylim(-2,6)+
   geom_point(size=1.4)+
-  geom_hline(yintercept=2.5)
-  #geom_vline(xintercept=.62)
-  #facet_wrap(~type,scales="free")
+  geom_hline(data=zipilines,aes(yintercept=Z))+#geom_hline(yintercept=c(2.5,.62))
+  facet_wrap(~zipi,scales="free")
 dev.off()
+
+zipioutputallrelabun2hubs<-subset(zipioutputallrelabun2,zipioutputallrelabun2$zi>2.5)
+min(zipioutputallrelabun2hubs$relabun)
+max(zipioutputallrelabun2hubs$relabun)
+
+zipioutputallrelabun2cons<-subset(zipioutputallrelabun2,zipioutputallrelabun2$pi>.62)
+min(zipioutputallrelabun2cons$relabun)
+max(zipioutputallrelabun2cons$relabun)
+
+
+
+
+#Fungi in hubs/connectors
+datITS3fotu3
+#mean relative abundances of all fungi in dataset entering network analysis
+relabunlomehibf<-aggregate.data.frame(datITS3fotu3[,32:1156],by=list(datITS3fotu3$lomehi),mean)
+rownames(relabunlomehibf)<-relabunlomehibf$Group.1
+relabunlomehibf<-relabunlomehibf[,-1]
+relabunlomehibf<-relabunlomehibf*100
+relabunlomehibf[,1:40]
+relabunlomehibft<-t(relabunlomehibf)
+relabunlomehibft[1:40,]
+relabunlomehibft2<-data.frame(otu=rownames(relabunlomehibft),relabunlomehibft)
+head(relabunlomehibft2)
+
+zipioutputlorelabunf<-merge(zipioutputlo,relabunlomehibft2) #this only selects the fungi (the intersection of otu in both data sets)
+head(zipioutputlorelabunf)
+zipioutputmerelabunf<-merge(zipioutputme,relabunlomehibft2) #this only selects the fungi (the intersection of otu in both data sets)
+head(zipioutputmerelabunf)
+zipioutputhirelabunf<-merge(zipioutputhi,relabunlomehibft2) #this only selects the fungi (the intersection of otu in both data sets)
+head(zipioutputhirelabunf)
+
+plot(zipioutputlorelabunf$lo,zipioutputlorelabunf$zi,pch=1,bg=1)
+points(zipioutputmerelabunf$me,zipioutputmerelabunf$zi,pch=1,bg=1)
+points(zipioutputhirelabunf$hi,zipioutputhirelabunf$zi,pch=1,bg=1)
+abline(h=2.5)
+
+plot(zipioutputlorelabunf$lo,zipioutputlorelabunf$pi,pch=1,bg=1,xlim=c(0,13),ylim=c(0,1))
+points(zipioutputmerelabunf$me,zipioutputmerelabunf$pi,pch=1,bg=1)
+points(zipioutputhirelabunf$hi,zipioutputhirelabunf$pi,pch=1,bg=1)
+abline(h=.62)
+
+#organizing dataframe for ggplot
+zipioutputlorelabunf2<-zipioutputlorelabunf[,-c(6,8)];colnames(zipioutputlorelabunf2)[6]<-"relabun"
+zipioutputmerelabunf2<-zipioutputmerelabunf[,-c(6,7)];colnames(zipioutputmerelabunf2)[6]<-"relabun"
+zipioutputhirelabunf2<-zipioutputhirelabunf[,-c(7,8)];colnames(zipioutputhirelabunf2)[6]<-"relabun"
+
+zipioutputallrelabunf2<-rbind(zipioutputlorelabunf2,zipioutputmerelabunf2,zipioutputhirelabunf2)
+zipioutputallrelabunf2$density<-factor(zipioutputallrelabunf2$density,levels=c("Low",'Medium','High'))
+zipioutputallrelabunf3 <- zipioutputallrelabunf2 %>%
+  gather(zipi,value,zi:pi)
+zipioutputallrelabunf3$zipi<-factor(zipioutputallrelabunf3$zipi,levels=c("zi","pi"))
+
+min(zipioutputallrelabunf3$relabun)
+max(zipioutputallrelabunf3$relabun)
+
+
+
+
+
 
 
 

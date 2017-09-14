@@ -142,11 +142,14 @@ colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
 plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
 #dev.off()
 
+
+
 #sized by hubs/connectors
 sizesgraph3<-ifelse(verticesgraph3$otu%in%hubslo|verticesgraph3$otu%in%connectorslo,8,4)
 shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
-plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3,add=T)#
 dev.off()
 
 
