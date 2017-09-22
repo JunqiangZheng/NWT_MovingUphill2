@@ -142,15 +142,24 @@ colorgraph3<-merge(verticesgraph3,labelsall,"otu",all.y=F,all.x=F,sort=F)
 plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph3$abun)*2
 #dev.off()
 
-
+#layout
+l3<-layout_with_fr(graph3)
+rownames(l3) <- V(graph3)$name
+l3b<-layout.norm(l3,xmin=-1,xmax=1,ymin=-1,ymax=1)
 
 #sized by hubs/connectors
 sizesgraph3<-ifelse(verticesgraph3$otu%in%hubslo|verticesgraph3$otu%in%connectorslo,8,4)
 shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
-plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
-plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3,add=T)#
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+
+graph3.sub <- induced_subgraph(graph3,c(as.character(hubslo),as.character(connectorslo)))
+
+plot(graph3.sub,vertex.size=8,vertex.color=colorgraph3$color[which(colorgraph3$otu%in%V(graph3.sub)$name)],vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3[which(colorgraph3$otu%in%V(graph3.sub)$name)],layout=l3b[V(graph3.sub)$name,],add=T,rescale=F)#,vertex.frame.color="gray80"
 dev.off()
+
+
 
 
 #colored by module - for ESA
@@ -220,7 +229,6 @@ shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
 plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3)#vertex.size=log(sizesgraph3$abun)*2
 
 #colored by module but not sized by hubs, saving l allows you to remember the configuration
-l3<-layout_with_fr(graph3)
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6module.pdf")
 plot(graph3,vertex.size=4,vertex.color=colorgraph3f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l3)#vertex.size=log(sizesgraph3$abun)*2
 dev.off()
@@ -281,12 +289,24 @@ colorgraph2<-merge(verticesgraph2,labelsall,"otu",all.y=F,all.x=F,sort=F)
 #pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6.pdf")
 plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#vertex.size=log(sizesgraph2$abun)*2 #dev.off()
 
+
+#layout
+l2<-layout_with_fr(graph2)
+rownames(l2) <- V(graph2)$name
+l2b<-layout.norm(l2,xmin=-1,xmax=1,ymin=-1,ymax=1)
+
 #sized by hubs/connectors
 sizesgraph2<-ifelse(verticesgraph2$otu%in%hubsme|verticesgraph2$otu%in%connectorsme,8,4)
 shapesgraph2<-ifelse(verticesgraph2$otu%in%hubsme,"csquare",'circle')
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
-plot(graph2,vertex.size=sizesgraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph2)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+plot(graph2,vertex.size=sizesgraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph2,layout=l2b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+
+graph2.sub <- induced_subgraph(graph2,c(as.character(hubsme),as.character(connectorsme)))
+
+plot(graph2.sub,vertex.size=8,vertex.color=colorgraph2$color[which(colorgraph2$otu%in%V(graph2.sub)$name)],vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph2[which(colorgraph2$otu%in%V(graph2.sub)$name)],layout=l2b[V(graph2.sub)$name,],add=T,rescale=F)#,vertex.frame.color="gray80"
 dev.off()
+
 
 
 #colored by module but not sized by hubs, saving l allows you to remember the configuration
@@ -351,7 +371,6 @@ colorgraph2d$order<-1:nrow(colorgraph2d)
 colorgraph2e<-merge(colorgraph2d,colorgraph2c,"num")
 colorgraph2f<-colorgraph2e[order(colorgraph2e$order),]
 
-l2<-layout_with_fr(graph2)
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6module.pdf")
 plot(graph2,vertex.size=4,vertex.color=colorgraph2f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l2)#vertex.size=log(sizesgraph3$abun)*2
 dev.off()
@@ -388,12 +407,25 @@ sizesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,8,4)
 plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2  vertex.label=as.character(colorgraph1$orders)  
 #dev.off()
 
+
+
+#layout
+l1<-layout_with_fr(graph1)
+rownames(l1) <- V(graph1)$name
+l1b<-layout.norm(l1,xmin=-1,xmax=1,ymin=-1,ymax=1)
+
 #sized by hubs/connectors
 sizesgraph1<-ifelse(verticesgraph1$otu%in%hubshi|verticesgraph1$otu%in%connectorshi,8,4)
 shapesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,"csquare",'circle')
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehubcon.pdf")
-plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph1)#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph1,layout=l1b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
+
+graph1.sub <- induced_subgraph(graph1,c(as.character(hubshi),as.character(connectorshi)))
+
+plot(graph1.sub,vertex.size=8,vertex.color=colorgraph1$color[which(colorgraph1$otu%in%V(graph1.sub)$name)],vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph1[which(colorgraph1$otu%in%V(graph1.sub)$name)],layout=l1b[V(graph1.sub)$name,],add=T,rescale=F)#,vertex.frame.color="gray80"
 dev.off()
+
 
 
 #colored by module but not sized by hubs, saving l allows you to remember the configuration
@@ -504,7 +536,6 @@ colorgraph1d$order<-1:nrow(colorgraph1d)
 colorgraph1e<-merge(colorgraph1d,colorgraph1c,"num")
 colorgraph1f<-colorgraph1e[order(colorgraph1e$order),]
 
-l1<-layout_with_fr(graph1)
 pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6module.pdf")
 plot(graph1,vertex.size=4,vertex.color=colorgraph1f$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,layout=l1)#vertex.size=log(sizesgraph3$abun)*2
 dev.off()

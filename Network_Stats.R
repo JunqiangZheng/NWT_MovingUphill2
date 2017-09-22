@@ -459,7 +459,7 @@ zipioutputallrelabun3 <- zipioutputallrelabun2 %>%
 zipioutputallrelabun3$zipi<-factor(zipioutputallrelabun3$zipi,levels=c("zi","pi"))
 zipilines<-data.frame(zipi = c("zi", "pi"), Z = c(2.5, .62))
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipirelabun.pdf",width=7, height=4.7) #for two panels width=7, height=3.5)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipirelabun.pdf",width=6.4, height=3) #for two panels width=7, height=3.5)
 ggplot(zipioutputallrelabun3,aes(x=relabun,y=value,color=density))+# as.numeric(fert),color=species
   labs(x="Relative abundance (%)",y="Within-module connectivity (Zi)")+
   theme_classic()+
