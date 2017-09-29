@@ -8,13 +8,13 @@
 #get sequence names from the comm.data files, match with euk or 16S label file, then rbind labelfiles
 
 #Bacteria: photosynthetic phyla are Chloroflexi and Cyanobacteria and some of the Chlorobi (not the Ignavibacteriaceae, there aren't many of these though, the most abundant is present in 7 samples)
-labelsBac3<-as.data.frame(labelsBac2)
+labelsBac3<-as.data.frame(labelsBacchloro2)
 labelsBac4<-cbind(otu=rownames(labelsBac3),labelsBac3)
 labelsBac4$group<-NA
 
 unique(labelsBac4)
 head(labelsBac4)
-ind<-which(labelsBac4$labels=="Chloroflexi"|labelsBac4$labels=="Cyanobacteria"|labelsBac4$labels=="Chlorobi")
+ind<-which(labelsBac4$labels=="Chloroflexiphoto"|labelsBac4$labels=="Cyanobacteria"|labelsBac4$labels=="Chlorobi") #this was changed from Chloroflexi to Chloroflexiphoto
 labelsBac4$group[ind]<-"PhotosyntheticBacteria"
 labelsBac4$group[-ind]<-"NonphotosyntheticBacteria"
 
@@ -143,7 +143,7 @@ plot(graph3,vertex.size=4,vertex.color=colorgraph3$color,vertex.label.cex=.8,ver
 #dev.off()
 
 #layout
-l3<-layout_with_fr(graph3)
+#l3<-layout_with_fr(graph3) #I don't want to run this accidentally
 rownames(l3) <- V(graph3)$name
 l3b<-layout.norm(l3,xmin=-1,xmax=1,ymin=-1,ymax=1)
 
@@ -151,7 +151,7 @@ l3b<-layout.norm(l3,xmin=-1,xmax=1,ymin=-1,ymax=1)
 sizesgraph3<-ifelse(verticesgraph3$otu%in%hubslo|verticesgraph3$otu%in%connectorslo,8,4)
 shapesgraph3<-ifelse(verticesgraph3$otu%in%hubslo,"csquare",'circle')
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/lodensityotuplantbacfuneukf10q.01r.6sizehubconfrontchloroflexi.pdf")
 plot(graph3,vertex.size=sizesgraph3,vertex.color=colorgraph3$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph3,layout=l3b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
 
 graph3.sub <- induced_subgraph(graph3,c(as.character(hubslo),as.character(connectorslo)))
@@ -291,7 +291,7 @@ plot(graph2,vertex.size=4,vertex.color=colorgraph2$color,vertex.label.cex=.8,ver
 
 
 #layout
-l2<-layout_with_fr(graph2)
+#l2<-layout_with_fr(graph2) #I don't want to run accidentally
 rownames(l2) <- V(graph2)$name
 l2b<-layout.norm(l2,xmin=-1,xmax=1,ymin=-1,ymax=1)
 
@@ -299,7 +299,7 @@ l2b<-layout.norm(l2,xmin=-1,xmax=1,ymin=-1,ymax=1)
 sizesgraph2<-ifelse(verticesgraph2$otu%in%hubsme|verticesgraph2$otu%in%connectorsme,8,4)
 shapesgraph2<-ifelse(verticesgraph2$otu%in%hubsme,"csquare",'circle')
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/medensityotuplantbacfuneukf10q.01r.6sizehubconfrontchloroflexi.pdf")
 plot(graph2,vertex.size=sizesgraph2,vertex.color=colorgraph2$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph2,layout=l2b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
 
 graph2.sub <- induced_subgraph(graph2,c(as.character(hubsme),as.character(connectorsme)))
@@ -410,7 +410,7 @@ plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,ver
 
 
 #layout
-l1<-layout_with_fr(graph1)
+#l1<-layout_with_fr(graph1) #dont want to run accidentally
 rownames(l1) <- V(graph1)$name
 l1b<-layout.norm(l1,xmin=-1,xmax=1,ymin=-1,ymax=1)
 
@@ -418,7 +418,7 @@ l1b<-layout.norm(l1,xmin=-1,xmax=1,ymin=-1,ymax=1)
 sizesgraph1<-ifelse(verticesgraph1$otu%in%hubshi|verticesgraph1$otu%in%connectorshi,8,4)
 shapesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,"csquare",'circle')
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehubconfront.pdf")
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/hidensityotuplantbacfuneukf10q.01r.6sizehubconfrontcloroflexi.pdf")
 plot(graph1,vertex.size=sizesgraph1,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA,vertex.shape=shapesgraph1,layout=l1b,rescale=F,xlim=c(-1,1),ylim=c(-1,1))#vertex.size=log(sizesgraph3$abun)*2   vertex.frame.color=ifelse(verticesgraph3$otu%in%hubslo,"white","black")
 
 graph1.sub <- induced_subgraph(graph1,c(as.character(hubshi),as.character(connectorshi)))

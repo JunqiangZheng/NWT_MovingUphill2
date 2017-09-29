@@ -231,7 +231,30 @@ unique(tax_table(datBac3)[,"Rank2"])
 #remove the __ with substring
 labelsBac<-substring(tax_table(datBac3)[,"Rank2"],3)
 
+#make the class the label for anything in the Phylum Chloroflexi, Only the class Chloroflexi are photosynthetic, the other classes (Ktedontobacteria) are not photosynthetic. There many OTU listed as phylum Chloroflexi but that do not have a Class. The majority of the taxa in Chloroflexi that do have a class are Ktedonobacteria. Thus I will make the default color for heterotrophs (Purple), and just change the Chloroflexales to photosynthetic (green)
+ind<-which(labelsBac=="Chloroflexi")
+temp<-data.frame(tax_table(datBac3))
+length(which(temp$Rank2=="__Chloroflexi"))
+length(which(temp$Rank2=="__Chloroflexi"&temp$Rank3=="__Chloroflexi"))#none are known to be in class chloroflexi
+length(which(temp$Rank3=="__Chloroflexales"|temp$Rank4=="__Chloroflexaceae")) #81 are Chloroflexales which I imagine are in the class Chloroflexi
+length(which(temp$Rank2=="__Chloroflexi"&temp$Rank4=="__Chloroflexaceae")) #61 are Chloroflexaceae, these are included in the 81 above
+length(which(temp$Rank2=="__Chloroflexi"&temp$Rank3=="__Ktedonobacteria"))#1497 are Ktedonobacteria
+temp<-subset(temp,Rank2=="__Chloroflexi")
+sort(unique(temp$Rank3))
+sort(unique(temp$Rank4))
+#to label the chloroflexales as phototrophs
+temp<-data.frame(tax_table(datBac3))
+ind<-which(temp$Rank3=="__Chloroflexales"|temp$Rank4=="__Chloroflexaceae")
+labelsBacchloro<-labelsBac
+labelsBacchloro[ind]<-"Chloroflexiphoto"
+#to label the ktedonobacteria as heterotrophs
+# temp<-data.frame(tax_table(datBac3))
+# ind<-which(temp$Rank3=="__Ktedonobacteria")
+# labelsBacchloro<-labelsBac
+# labelsBacchloro[ind]<-"Chloroflexihetero"
+
 colnames(labelsBac)<-"labels"
+colnames(labelsBacchloro)<-"labels"
 
 #replace tax table, datBac3 (relativized) datBac2 (not relativized)
 tax_table(datBac2)<-cbind(tax_table(datBac2),labelsBac)
@@ -384,8 +407,11 @@ names(datEukN5fotu3)[-c(1:31)]<-namesEukN2
 names(datEukS4fotu3)[-c(1:31)]<-namesEukS2
 names(datITS3fotu3)[-c(1:31)]<-namesITS2
 
+#I have tow labels files for bacteria, the labelsBac is by phylum, the labelsBac2is for networks where some of the chloroflexi are heterotrophs and some are phototrophs
 labelsBac2<-labelsBac
 rownames(labelsBac2)<-sub("^", "b",rownames(labelsBac2))
+labelsBacchloro2<-labelsBacchloro
+rownames(labelsBacchloro2)<-sub("^", "b",rownames(labelsBacchloro2))
 labelsEukN2<-labelsEukN
 rownames(labelsEukN2)<-sub("^", "n",rownames(labelsEukN2))
 labelsEukS2<-labelsEukS

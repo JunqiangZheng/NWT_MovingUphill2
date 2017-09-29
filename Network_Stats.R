@@ -595,6 +595,58 @@ mean(c(40,33,34))/1498
 mean(c(0,0,3))/233
 
 
+#number of bacteria fungi euks in networks for lo me hi separately, as percentage of input of lo me hi separately
+datBacr3fotu3
+datEukN5fotu3
+datEukS4fotu3
+datITS3fotu3
+plantcomp2
+
+datBacr3fotu3r<-datBacr3fotu3
+datBacr3fotu3r$lomehi<-factor(datBacr3fotu3r$lomehi,levels=c("lo","me","hi"))
+datBacr3fotu3r2<-aggregate.data.frame(datBacr3fotu3r[,32:3803], by=list(datBacr3fotu3r$lomehi),sum)
+datBacr3fotu3r2[,1:10]
+temp<-data.frame(lomehi=c("lo","me","hi"),richness=rowSums(datBacr3fotu3r2[,2:3773]>0))
+c(546,551,651)/temp$richness
+
+# datBacr3fotu3r2<-ifelse(datBacr3fotu3r[,2:3773]>0,1,0) #check that it is correct
+# rowSums(datBacr3fotu3r2)
+
+datITS3fotu3r<-datITS3fotu3
+datITS3fotu3r$lomehi<-factor(datITS3fotu3r$lomehi,levels=c("lo","me","hi"))
+datITS3fotu3r2<-aggregate.data.frame(datITS3fotu3r[,32:1156], by=list(datITS3fotu3r$lomehi),sum)
+datITS3fotu3r2[,1:10]
+temp<-data.frame(lomehi=c("lo","me","hi"),richness=rowSums(datITS3fotu3r2[,2:1126]>0))
+c(35,29,25)/temp$richness
+
+datEukS4fotu3
+datEukS4fotu3r<-datEukS4fotu3
+datEukS4fotu3r$lomehi<-factor(datEukS4fotu3r$lomehi,levels=c("lo","me","hi"))
+datEukS4fotu3r2<-aggregate.data.frame(datEukS4fotu3r[,32:1520], by=list(datEukS4fotu3r$lomehi),sum)
+datEukS4fotu3r2[,1:10]
+temp<-data.frame(lomehi=c("lo","me","hi"),richness=rowSums(datEukS4fotu3r2[,2:1490]>0))
+c(40,33,34)/temp$richness
+
+datEukN5fotu3
+datEukN5fotu3r<-datEukN5fotu3
+datEukN5fotu3r$lomehi<-factor(datEukN5fotu3r$lomehi,levels=c("lo","me","hi"))
+datEukN5fotu3r2<-aggregate.data.frame(datEukN5fotu3r[,32:264], by=list(datEukN5fotu3r$lomehi),sum)
+datEukN5fotu3r2[,1:10]
+temp<-data.frame(lomehi=c("lo","me","hi"),richness=rowSums(datEukN5fotu3r2[,2:234]>0))
+c(0,0,3)/temp$richness
+
+plantcomp2
+plantcomp2r<-comm.dataALL[,6651:6704]
+plantcomp2r2<-plantcomp2r[,colSums(plantcomp2r>0)>2]
+plantcomp2r3<-data.frame(comm.dataALL[,1:31],plantcomp2r2)
+plantcomp2r3$lomehi<-factor(plantcomp2r3$lomehi,levels=c("lo","me","hi"))
+plantcomp2r4<-aggregate.data.frame(plantcomp2r3[,32:82], by=list(plantcomp2r3$lomehi),sum)
+plantcomp2r4[,1:10]
+temp<-data.frame(lomehi=c("lo","me","hi"),richness=rowSums(plantcomp2r4[,2:52]>0))
+c(0,2,3)/temp$richness
+
+
+
 #Intersection of edges of two networks
 graph.intersection(graphlo,graphme)#union of the vertex names and an intersection of the edges
 graph.union(graphlo,graphme)
