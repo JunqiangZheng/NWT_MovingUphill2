@@ -283,7 +283,7 @@ abline(v=.62)
 
 zipioutputall<-rbind(zipioutputlo,zipioutputme,zipioutputhi)
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipi",width=7, height=4.7) #for two panels width=7, height=3.5)
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipi.pdf",width=7, height=4.7) #for two panels width=7, height=3.5)
 ggplot(zipioutputall,aes(x=pi,y=zi,color=density))+# as.numeric(fert),color=species
   labs(x="Among-module connectivity (Pi)",y="Within-module connectivity (Zi)")+
   theme_classic()+
@@ -293,9 +293,27 @@ ggplot(zipioutputall,aes(x=pi,y=zi,color=density))+# as.numeric(fert),color=spec
   geom_point(size=1.4)+
   geom_hline(yintercept=2.5)+
   geom_vline(xintercept=.62)
-  #geom_smooth(method=lm,se=F,size=.8,color="black") +
-  #geom_smooth(method=lm,se=F,size=.8,color="black",formula = y ~ poly(x, 2)) +
-  #facet_wrap(~type,scales="free")
+#geom_smooth(method=lm,se=F,size=.8,color="black") +
+#geom_smooth(method=lm,se=F,size=.8,color="black",formula = y ~ poly(x, 2)) +
+#facet_wrap(~type,scales="free")
+dev.off()
+
+zipioutputall$density<-factor(zipioutputall$density,levels=c("Low",'Medium','High'))
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Figs/zipibw.pdf",width=7, height=4.7) #for two panels width=7, height=3.5)
+ggplot(zipioutputall,aes(x=pi,y=zi,color=density))+# as.numeric(fert),color=species
+  labs(x="Among-module connectivity (Pi)",y="Within-module connectivity (Zi)")+
+  theme_classic()+
+  scale_color_manual(values=c(gray(.7), gray(.5),gray(.3)))+
+  theme(line=element_line(size=.3),text=element_text(size=12),strip.background = element_rect(colour="white", fill="white"),axis.line=element_line(color="gray30",size=.5))+
+  xlim(0,1)+
+  ylim(-2,6)+
+  geom_point(size=1.4)+
+  geom_hline(yintercept=2.5)+
+  geom_vline(xintercept=.62)
+#geom_smooth(method=lm,se=F,size=.8,color="black") +
+#geom_smooth(method=lm,se=F,size=.8,color="black",formula = y ~ poly(x, 2)) +
+#facet_wrap(~type,scales="free")
 dev.off()
 
 

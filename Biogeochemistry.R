@@ -9,17 +9,17 @@ biogeo2<-merge(biogeo,datBacr3fotu[,1:31],by="X.SampleID")
 
 dim(biogeo2)
 
-#I replaced all negative numbers with 0, not sure if I should do this, since they are relative, but it doesn't really make sense to have negative microbial biomass or inorganic N
-biogeo2[biogeo2<0]<-0
+#I could replace all negative numbers with 0, not sure if I should do this, since they are relative, but it doesn't really make sense to have negative microbial biomass or inorganic N
+#biogeo2[biogeo2<0]<-0
 
 biogeom<-biogeo2%>%
-  select(pH.x:MicN,lomehi)%>%
+  select(pH.x:TC,lomehi)%>%
   group_by(lomehi)%>%
   #summarise_each(funs(mean(., na.rm=T),std.error),pH.x:MicN)%>%
   #summarise_each(funs(max(.,na.rm=T)-min(.,na.rm=T)),pH.x:MicN)%>%
-  summarise_each(funs(sd(.,na.rm=T)/mean(.,na.rm=T)),pH.x:MicN)%>%
+  summarise_at(vars(pH.x:TC),funs(sd(.,na.rm=T)/mean(.,na.rm=T)))%>%
   mutate(lomehi=factor(lomehi,levels=c("lo","me","hi")))%>%
-  gather(variable,range,pH.x:MicN)
+  gather(variable,range,pH.x:TC)
 as.data.frame(biogeom)
 
 range(biogeo2$pH.x,na.rm=T)
@@ -34,3 +34,24 @@ none of the enzymes have highest variability in high plants
 Highest in high plants: DOC, IN (barely), MicN, NO3, TDN, WHC
 Highest somewhere else: MicC, moisture, NH4, pH
 
+
+
+biogeom<-biogeo2%>%
+  select(pH.x:TC,lomehi)%>%
+  group_by(lomehi)%>%
+  #summarise_each(funs(mean(., na.rm=T),std.error),pH.x:MicN)%>%
+  #summarise_each(funs(max(.,na.rm=T)-min(.,na.rm=T)),pH.x:MicN)%>%
+  summarise_at(vars(pH.x:TC),funs(mean(.,na.rm=T)))%>%
+  mutate(lomehi=factor(lomehi,levels=c("lo","me","hi")))%>%
+  gather(variable,range,pH.x:TC)
+as.data.frame(biogeom)
+
+plot(biogeo2$Plant_Dens,biogeo2$TC)
+summary(lm(TC~Plant_Dens,data=biogeo2))
+library(Hmisc)
+rcorr(cbind(Plant_Den=biogeo2$Plant_Den,TC=biogeo2$TC,TN=biogeo2$TN))
+plot(biogeo2$Plant_Div,biogeo2$TC)
+
+plot(biogeo2$Plant_Dens,biogeo2$TN)
+summary(lm(TN~Plant_Dens,data=biogeo2))
+plot(biogeo2$Plant_Div,biogeo2$TN)
