@@ -44,6 +44,36 @@ datEukN3 <- prune_samples(sample_names(datEukN2)!="N.78.2015", datEukN2)
 datEukS2 <- prune_samples(sample_names(datEukS)!="S.61.2015", datEukS)
 
 
+
+###########for Dorota's nematode ms############
+#read in file with metazoa
+DEukS<-import_biom("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/Euk_ALL_97_S111_OTU_tablefiltsingnonchimericbactarcplantEukSoil2015.biom")
+DEukS2<-merge_phyloseq(DEukS,mapEuk)
+
+#Filter out fungi and nematodes then calcualte Chao1 on the 18S data
+which(tax_table(DEukS2)[,4]=="__Nematoda")
+which(tax_table(DEukS2)[,3]=="__Fungi")
+#which(tax_table(DEukS2)[,4]=="__Arthropoda")
+DEukS3<-subset_taxa(DEukS2, Rank4!="__Nematoda")
+DEukS4<-subset_taxa(DEukS3, Rank3!="__Fungi")
+
+#filter singletons
+DEukS5<-prune_taxa(taxa_sums(DEukS4) > 1, DEukS4)
+
+#filter plot with only 541 reads
+DEukS6 <- prune_samples(sample_names(DEukS5)!="S.61.2015", DEukS5)
+
+#rarefy
+sort(sample_sums(DEukS6))#rarefy to 938
+DEukS7<-rarefy_even_depth(DEukS6,sample.size=min(sample_sums(DEukS6)),rngseed=10,replace=F) #
+
+#calculate Chao1
+DChao1<-estimate_richness(DEukS7, measures=c("Chao1", "Shannon","Observed"))
+DChao1a<-DChao1[order(rownames(DChao1)),]
+write.csv(DChao1a,"/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/Euks/18SChao1nofungiornematodesforDorota.csv",row.names=T)
+#####################
+
+
 #rarefy and transform to relative abundance
 min(sample_sums(datEukS2))#rarefy to 808
 min(sample_sums(datEukN3))#rarefy to 692
