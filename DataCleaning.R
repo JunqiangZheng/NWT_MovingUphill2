@@ -55,12 +55,12 @@ which(tax_table(DEukS2)[,4]=="__Nematoda")
 which(tax_table(DEukS2)[,3]=="__Fungi")
 #which(tax_table(DEukS2)[,4]=="__Arthropoda")
 DEukS3<-subset_taxa(DEukS2, is.na(Rank4)==T|Rank4!="__Nematoda")
-DEukS4<-subset_taxa(DEukS3, is.na(Rank4)==T|Rank3!="__Fungi")
+DEukS4<-subset_taxa(DEukS3, is.na(Rank3)==T|Rank3!="__Fungi")
 
 #filter singletons
 DEukS5<-prune_taxa(taxa_sums(DEukS4) > 1, DEukS4)
 
-#filter plot with only 541 reads
+#filter plot with only 545 reads
 DEukS6 <- prune_samples(sample_names(DEukS5)!="S.61.2015", DEukS5)
 
 #rarefy
