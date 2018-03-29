@@ -26,6 +26,12 @@ cbind(biogeo3$Sample_name,row.names(hmscY))
 write.csv(biogeo3,"/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/biogeo3.csv",row.names=F)
 
 
+
+
+
+
+
+
 ##### Start from here: read in files #####
 biogeo3<-read.csv("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot_King/Figures&Stats/kingdata/biogeo3.csv")
 
@@ -51,7 +57,7 @@ hmscYb<-hmscY[ind,]
 XXXX
 
 #select lo/hi
-ind<-which(hmscXb$lomehi=="hi")
+ind<-which(hmscXb$lomehi=="lo")
 hmscXc<-hmscXb[ind,]
 hmscYc<-hmscYb[ind,]
 
@@ -74,7 +80,7 @@ hmscYe<-sqrt(hmscYd*100)
 #hist(hmscYe[,12])
 
 #check if the values are too low that some tolerance is messing up the CI estimates, yes important to scale y
-hmscYf<-scale(d)
+hmscYf<-scale(hmscYe)
 
 #make them matrices
 hmscXe<-as.matrix(hmscXd)
@@ -256,11 +262,35 @@ ind<-which(CorsCI$corMat.025<0&CorsCI$corMat.975<0|CorsCI$corMat.025>0&CorsCI$co
 CorsCI[ind,]#there are 12 that don't overlap 0!!! need to see if my code below is correct
 hist(CorsCI$averageCor)
 
-ind<-which(CorsCI$averageCor>.7)
+ind<-which(CorsCI$averageCor>.9)
+length(ind)
+CorsCI[ind,]
+ind<-which(CorsCI$averageCor<(-.9))
+length(ind)
 CorsCI[ind,]
 
 hist(corMat["bdenovo193772","bdenovo188874" , , 1])
 hist(corMat["bdenovo117183","bdenovo85595" , , 1])
+
+
+#graphing with igraph
+CorsCIhi<-CorsCI
+CorsCIhi$direction<-sign(CorsCIhi$averageCor)
+ind<-which(CorsCIhi$corMat.025<0&CorsCIhi$corMat.975<0|CorsCIhi$corMat.025>0&CorsCIhi$corMat.975>0)
+length(ind)
+inputhi<-CorsCIhi[ind,]
+dim(inputhi)
+#inputhiv<-subset(edge_listsKS32no2b,qval<.05&trt=="hi")#
+#vertexsizes1<-unique(data.frame(otu=c(as.character(inputhiv$taxa1),as.character(inputhiv$taxa2)),abun=c(inputhiv$ab1,inputhiv$ab2)))
+graph1<-simplify(graph.edgelist(as.matrix(inputhi[,1:2]),directed=FALSE))
+graph1$layout <- layout_in_circle
+#verticesgraph1<-as.data.frame(rownames(as.matrix(V(graph1))))
+#colnames(verticesgraph1)<-"otu" #
+#colorgraph1<-merge(verticesgraph1,labelsall,"otu",all.y=F,all.x=F,sort=F)
+#sizesgraph1<-ifelse(verticesgraph1$otu%in%hubshi,8,4)
+plot(graph1,vertex.size=4,edge.curved=T,vertex.label=NA,edge.color=ifelse(inputhi$direction==-1,"blue","red"))
+#plot(graph1,vertex.size=4,vertex.color=colorgraph1$color,vertex.label.cex=.8,vertex.label.dist=.1,vertex.label.color="black",edge.curved=T,edge.color="gray40",vertex.label=NA)#,vertex.size=log(sizesgraph1$abun)*2  vertex.label=as.character(colorgraph1$orders)  
+
 
 
 
@@ -280,8 +310,8 @@ corrplot(averageCor2, method = "color", col = colorRampPalette(c("blue", "white"
 corMat2 <- corRandomEff(model, cor = TRUE)
 averageCor <- apply(corMat2[, , , 1], 1:2, mean)
 colMat <- matrix(NA, nrow = nrow(averageCor), ncol = ncol(averageCor))
-colMat[which(averageCor > 0.7, arr.ind = TRUE)] <- "red"
-colMat[which(averageCor < -0.7, arr.ind = TRUE)] <- "blue"
+colMat[which(averageCor > 0.9, arr.ind = TRUE)] <- "red"
+colMat[which(averageCor < -0.9, arr.ind = TRUE)] <- "blue"
 chordDiagram(averageCor, symmetric = TRUE,
              annotationTrack = c("name", "grid"),
              grid.col = "grey",col=colMat)
